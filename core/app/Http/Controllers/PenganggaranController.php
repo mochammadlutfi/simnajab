@@ -101,11 +101,11 @@ class PenganggaranController extends Controller
                 ]);
             }else{
 
-                $request->session()->put('penganggaran', $request->all);
+                $request->session()->put('penganggaran', $request->all());
 
                 return response()->json([
                     'fail' => false,
-                    'step2' => route('penganggaran.step2', $jalan_id)
+                    'step2' => route('penganggaran.step2', $request->jalan_id)
                 ]);
 
                 // $data = new Penganggaran();
@@ -133,36 +133,13 @@ class PenganggaranController extends Controller
         if($request->isMethod('get'))
         {
             $jalan = Jalan::find($jalan_id);
-            $step1 = $request->session()->get('penganggaran');
+            $step2 = $request->session()->get('penganggaran');
+            // dd($step2);
 
-            $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
-            $config['zoom'] = '13';
-            $config['map_height'] = '630px';
-            $config['map_type'] = 'ROADMAP';
-            $config['map_types_available'] = array('ROADMAP');
-            $config['places'] = TRUE;
-            $config['styles'] = array(
-            array("name"=>"Tanpa Label", "definition"=>array(
-                array("featureType"=>"poi.business", "elementType"=>"labels", "stylers"=>array(array("visibility"=>"off")))
-            ))
-            );
-            $config['stylesAsMapTypes'] = true;
-            $config['stylesAsMapTypesDefault'] = "Black Roads";
 
-            $config['directions'] = TRUE;
-            $config['directionsDraggable'] = TRUE;
-            $config['directionsAvoidHighways'] = TRUE;
-            $config['directionsChanged'] = 'longlat1.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].start_location.lng();
-            longlat2.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].end_location.lng();
-            lat_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat();
-            long_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lng();
-            lat_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat();
-            long_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lng();
-            computeTotalDistance(directionsDisplay.getDirections());
-            ';
 
             $gmap = new GMaps();
-            $gmap->initialize($config);
+            $gmap->initialize($this->peta($jalan->jalan_id));
 
             // Inisialisasi Jalan Awal
             $polyline = array();
@@ -196,7 +173,7 @@ class PenganggaranController extends Controller
             $gmap->add_marker($marker);
 
             $map = $gmap->create_map();
-            return view('penganggaran.step_2', compact('jalan', 'map'));
+            return view('penganggaran.step_2', compact('jalan', 'map', 'step2'));
         }
     }
 
@@ -327,6 +304,38 @@ class PenganggaranController extends Controller
                 'fail' => false,
             ]);
         }
+    }
+
+    function peta($jalan_id)
+    {
+        $jalan = Jalan::find($jalan_id);
+        $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
+        $config['zoom'] = '13';
+        $config['map_height'] = '630px';
+        $config['map_type'] = 'ROADMAP';
+        $config['map_types_available'] = array('ROADMAP');
+        $config['places'] = TRUE;
+        $config['styles'] = array(
+        array("name"=>"Tanpa Label", "definition"=>array(
+            array("featureType"=>"poi.business", "elementType"=>"labels", "stylers"=>array(array("visibility"=>"off")))
+        ))
+        );
+        $config['stylesAsMapTypes'] = true;
+        $config['stylesAsMapTypesDefault'] = "Black Roads";
+
+        $config['directions'] = TRUE;
+        $config['directionsDraggable'] = TRUE;
+        $config['directionsAvoidHighways'] = TRUE;
+        $config['directionsChanged'] = 'longlat1.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        longlat2.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        lat_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat();
+        long_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        lat_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat();
+        long_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        computeTotalDistance(directionsDisplay.getDirections());
+        ';
+
+        return $config;
     }
 
 }

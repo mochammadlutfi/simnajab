@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\TPT;
 use App\Models\Jalan;
 use App\Models\Jembatan;
+use App\Models\Drainase;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -71,29 +72,65 @@ class JalanController extends Controller
     {
         if($request->isMethod('get'))
         {
-            // $config['center'] = '-6.835623,107.576190';
-            // $config['zoom'] = 'auto';
-            // $config['map_height'] = '600';
-            // $config['map_type'] = 'ROADMAP';
-            // $config['map_types_available'] = array('ROADMAP');
-            // $config['places'] = TRUE;
-            // $config['styles'] = array(
-            // array("name"=>"Tanpa Label", "definition"=>array(
-            //     array("featureType"=>"poi.business", "elementType"=>"labels", "stylers"=>array(array("visibility"=>"off")))
-            // ))
-            // );
-            // $config['stylesAsMapTypes'] = true;
-            // $config['stylesAsMapTypesDefault'] = "Black Roads";
+            $config['center'] = '-6.897002, 107.421230';
+            $config['zoom'] = 'auto';
+            $config['map_height'] = '600';
+            $config['map_type'] = 'ROADMAP';
+            $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
+            $config['places'] = TRUE;
+            $config['styles'] = array(
+            array("name"=>"Tanpa Label", "definition"=>array(
+                array("featureType"=>"poi.business", "elementType"=>"labels", "stylers"=>array(array("visibility"=>"off")))
+            ))
+            );
+            $config['kmlLayerPreserveViewport'] = TRUE;
+            $config['kmlLayerURL'] = 'https://www.dropbox.com/s/m64e170tumyev60/BandungBarat.kmz?dl=0';
+            $config['stylesAsMapTypes'] = true;
+            $config['stylesAsMapTypesDefault'] = "Black Roads";
+            $config['onrightclick'] = 'show_marker(event.latLng, event.latLng.lat(), event.latLng.lng()); cek_marker += 1;';
+            $config['placesAutocompleteInputID'] = 'cari_alamat';
+            $config['placesAutocompleteBoundsMap'] = TRUE;
+            $config['placesAutocompleteOnChange'] = "reset_alamat();";
 
-            // $config['directions'] = true;
-            // $config['directionsStart'] = '-6.859971, 107.565603';
-            // $config['directionsEnd'] = '-6.802795, 107.579122';
-            // // $config['directionsDivID'] =  'directionsDiv';
-            // $gmap = new GMaps();
-            // $gmap->initialize($config);
+            $config['directions'] = TRUE;
+            $config['directionsDraggable'] = TRUE;
+            $config['directionsAvoidHighways'] = TRUE;
+            $config['directionsChanged'] = 'longlat1.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+            longlat2.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+            lat_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat();
+            long_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+            lat_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat();
+            long_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+            computeTotalDistance(directionsDisplay.getDirections());
+            ';
+            $gmap = new GMaps();
+            $gmap->initialize($config);
 
-            // $map = $gmap->create_map();
-            return view('jalan.tambah', compact('map'));
+
+            // Marker Awal
+            $marker = array();
+            $marker['draggable'] = true;
+            $marker['visible'] = FALSE;
+            $marker['ondragend'] = 'marker_0.setPosition(event.latLng); longlat1.value = event.latLng.lat() + \', \' + event.latLng.lng();';
+            $marker['ondrag'] = 'marker_0.setPosition(event.latLng);';
+            $marker['icon'] = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=S|EA4335|FFFFFF';
+            $marker['infowindow_content'] = 'Titik Awal Rute Jalan';
+            $gmap->add_marker($marker);
+
+
+            // Marker Akhir
+            $marker = array();
+            $marker['draggable'] = true;
+            $marker['visible'] = FALSE;
+            $marker['ondragend'] = 'marker_1.setPosition(event.latLng); longlat2.value = event.latLng.lat() + \', \' + event.latLng.lng(); tampilRute(longlat1.value, event.latLng, directionsService, directionsDisplay); tampilRute(event.latLng.lat(), event.latLng.lng(), directionsService, directionsDisplay);';
+            // $marker['ondrag'] = '';
+            $marker['ondrag'] = 'marker_1.setPosition(event.latLng);';
+            $marker['icon'] = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=E|EA4335|FFFFFF';
+            $marker['infowindow_content'] = 'Titik Rute Akhir Jalan';
+            $gmap->add_marker($marker);
+
+            $map = $gmap->create_map();
+            return view('jalan.tambah1', compact('map'));
         }else{
             $rules = [
                 'nama' => 'required',
@@ -116,7 +153,6 @@ class JalanController extends Controller
                     'errors' => $validator->errors()
                 ]);
             }else{
-
                 $data = new Jalan();
                 $data->nama = $request->nama;
                 $data->panjang = $request->panjang;
@@ -131,6 +167,7 @@ class JalanController extends Controller
                 {
                     return response()->json([
                         'fail' => false,
+                        'url' => route('jalan.detail', $data->jalan_id)
                     ]);
                 }
             }
@@ -141,12 +178,14 @@ class JalanController extends Controller
     {
         $jalan = Jalan::find($id);
         $jembatan = Jembatan::where('jalan_id', $jalan->jalan_id)->latest()->get();
+        $tpt = TPT::where('jalan_id', $jalan->jalan_id)->latest()->get();
+        $drainase = Drainase::where('jalan_id', $jalan->jalan_id)->latest()->get();
 
         $config['center'] = $jalan->lat_akhir.', '.$jalan->lng_akhir;
         $config['zoom'] = '13';
         $config['map_height'] = '630px';
-        $config['map_type'] = 'ROADMAP';
-        $config['map_types_available'] = array('ROADMAP');
+        $config['map_type'] = 'SATELLITE';
+        $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
         $config['places'] = TRUE;
         $config['styles'] = array(
         array("name"=>"Tanpa Label", "definition"=>array(
@@ -162,8 +201,8 @@ class JalanController extends Controller
         $c = str_replace('(', '', $jalan->polyline);
         $c = str_replace('),', '|', $c);
         $c = str_replace(')', '|', $c);
-        $array = explode('|',$c);
-        $polyline['points'] = array_filter($array);
+        $array = array_filter(explode('|',$c));
+        $polyline['points'] = $array;
         $polyline['infowindow_content'] = '1 - Hello World!';
         $polyline['strokeWeight'] = 5;
         $polyline['strokeColor'] = 'blue';
@@ -179,6 +218,37 @@ class JalanController extends Controller
                 $marker['icon'] = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=J|EA4335|FFFFFF';
                 $marker['infowindow_content'] = $j->nama;
                 $gmap->add_marker($marker);
+            }
+        }
+
+        // if($tpt->count() > 0)
+        // {
+        //     $polyline = array();
+        //     $c = str_replace('(', '', $tpt->polyline);
+        //     $c = str_replace('),', '|', $c);
+        //     $c = str_replace(')', '|', $c);
+        //     $array = array_filter(explode('|',$c));
+        //     $polyline['points'] = $array;
+        //     $polyline['infowindow_content'] = '1 - Hello World!';
+        //     $polyline['strokeWeight'] = 5;
+        //     $polyline['strokeColor'] = 'orange';
+        //     $gmap->add_polyline($polyline);
+        // }
+            // dd($tpt);
+        if($tpt->count() > 0)
+        {
+            foreach($tpt as $t)
+            {
+                $coba = array();
+                $c = str_replace('(', '', $t->polyline);
+                $c = str_replace('),', '|', $c);
+                $c = str_replace(')', '|', $c);
+                $array = array_filter(explode('|',$c));
+                $coba['points'] = $array;
+                $coba['infowindow_content'] = '1 - Hello World!';
+                $coba['strokeWeight'] = 5;
+                $coba['strokeColor'] = 'red';
+                $gmap->add_polyline($coba);
             }
         }
 
@@ -215,6 +285,11 @@ class JalanController extends Controller
             $data->panjang = $request->panjang;
             $data->lebar = $request->lebar;
             $data->kondisi = $request->kondisi;
+            $data->lat_awal = $request->lat_awal;
+            $data->lng_awal = $request->long_awal;
+            $data->lat_akhir = $request->lat_akhir;
+            $data->lng_akhir = $request->long_akhir;
+            $data->polyline = $request->polypath;
             if($data->save())
             {
                 return response()->json([

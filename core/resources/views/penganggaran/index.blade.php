@@ -10,12 +10,6 @@
     <div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Kelola <small>Data Penganggaran</small></h3>
-            @role('admin')
-                <button id="btn_tambah" type="button" class="btn btn-secondary mr-5 mb-5 float-right btn-rounded">
-                    <i class="si si-plus mr-5"></i>
-                    Tambah Penganggaran Baru
-                </button>
-            @endrole
         </div>
         <div class="block-content">
             <table class="table table-hover table-striped" id="list-jalan">

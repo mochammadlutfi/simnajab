@@ -93,6 +93,11 @@
                 <div class="col-lg-8">
                     <div class="row">
                         <div class="col-lg-12">
+
+                            <div class="form-group">
+                                <label class="col-form-label">Masukan Alamat</label>
+                                <input type="text" class="form-control" name="cari_alamat" id="cari_alamat" placeholder="Masukan Alamat">
+                            </div>
                             {!! $map['html'] !!}
                         </div>
                     </div>
@@ -110,10 +115,10 @@ jQuery(document).ready(function () {
 
     $("#form-jalan").submit(function (e) {
         e.preventDefault();
-        var formData = new FormData($('#form-drainase')[0]);
+        var formData = new FormData($('#form-jalan')[0]);
 
         $.ajax({
-            url: "{{ route('drainase.simpan') }}",
+            url: "{{ route('jalan.tambah') }}",
             type: 'post',
             data: formData,
             cache: false,
@@ -125,14 +130,14 @@ jQuery(document).ready(function () {
                     $('#modal_embed').modal('hide');
                     swal({
                         title: "Berhasil",
-                        text: "Data Drainase Berhasil Disimpan",
+                        text: "Data Jalan Berhasil Disimpan",
                         timer: 3000,
                         buttons: false,
                         icon: 'success'
                     });
-                    window.setTimeout(function () {
-                        location.reload();
-                    }, 1500);
+                    window.setTimeout(function(){
+                        window.location = response.url;
+                    });
                 } else {
                     for (control in response.errors) {
                         $('#field-' + control).addClass('is-invalid');
@@ -149,7 +154,7 @@ jQuery(document).ready(function () {
         });
     });
 });
-
+var cek_marker = 1;
 longlat1 = document.querySelector('#field-longlat1');
 longlat2 = document.querySelector('#field-longlat2');
 polypath = document.querySelector('#polypath');
@@ -158,42 +163,6 @@ long_awal = document.querySelector('#long_awal');
 lat_akhir = document.querySelector('#lat_akhir');
 long_akhir = document.querySelector('#long_akhir');
 pj_jalan = document.querySelector('#field-panjang');
-function find_closest_point_on_path(drop_pt,path_pts){
-    var distances = new Array();
-    var distance_keys = new Array();
-
-    //For each point on the path
-    $.each(path_pts,function(key, path_pt){
-        //Find the distance in a linear crows-flight line between the marker point and the current path point
-        var R = 6371; // km
-        var dLat1 = (path_pt.lat()-drop_pt.lat());
-        var dLon1 = (path_pt.lng()-drop_pt.lng());
-        var dLat = convert_rad(dLat1);
-        var dLon = convert_rad(dLon1);
-        var lat1 = convert_rad(drop_pt.lat());
-        var lat2 = convert_rad(path_pt.lat());
-
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        var d = R * c;
-        //Store the distances and the key of the pt that matches that distance
-        distances[key] = d;
-        distance_keys[d] = key;
-        // console.log(distances);
-    });
-    //Return the latLng obj of the second closest point to the markers drag origin. If this point doesn't exist snap it to the actual closest point as this should always exist
-    return (typeof path_pts[distance_keys[_.min(distances)]+1] === 'undefined')?path_pts[distance_keys[_.min(distances)]]:path_pts[distance_keys[_.min(distances)]+1];
-    if (typeof(Number.prototype.toRad) === "undefined") {
-      Number.prototype.toRad = function() {
-        return this * Math.PI / 180;
-      }
-    }
-    function convert_rad(datanya)
-    {
-        return datanya * Math.PI / 180;
-    }
-}
 function tampilRute(origin, destination, service, display) {
     // alert(origin);
     directionsDisplay.setOptions({
@@ -218,6 +187,26 @@ function tampilRute(origin, destination, service, display) {
     // alert('asoo');
 }
 
+function reset_alamat()
+{
+    $('#cari_alamat').val('');
+}
+
+function show_marker(kordinat, koor1, koor2)
+{
+    if(cek_marker == 2)
+    {
+        marker_1.setVisible(true);
+        marker_1.setPosition(kordinat);
+        longlat2.value = koor1  + ', ' + koor2;
+        tampilRute(longlat1.value, longlat2.value, directionsService, directionsDisplay);
+    }else if(cek_marker == 1){
+        marker_0.setVisible(true);
+        marker_0.setPosition(kordinat);
+        longlat1.value = koor1  + ', ' + koor2;
+    }
+    alert(cek_marker);
+}
 function computeTotalDistance(result) {
     var total = 0;
     var polyline = new google.maps.Polyline({

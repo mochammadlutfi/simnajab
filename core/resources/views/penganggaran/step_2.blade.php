@@ -26,9 +26,9 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="form-group">
-                                    <label class="col-form-label">Panjang</label>
+                                    <label class="col-form-label">Patok Awal {{ $step2['tujuan'] }}</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="field-panjang" name="panjang" placeholder="Masukan Panjang TPT">
+                                        <input type="number" class="form-control" id="field-patok_awal" name="patok_awal" placeholder="Patok Awal {{ $step2['tujuan'] }}">
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 Meter
@@ -38,43 +38,16 @@
                                     <div id="error-panjang" class="text-danger font-size-sm"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Pasang Batu</label>
-                                    <select class="form-control" name="pasang_batu" id="field-pasang_batu">
-                                        <option value="">Pilih</option>
-                                        <option value="1">Ya</option>
-                                        <option value="0">Tidak</option>
-                                    </select>
-                                    <div id="error-pasang_batu" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Pasang Beton</label>
-                                    <select class="form-control" name="beton" id="field-beton">
-                                        <option value="">Pilih</option>
-                                        <option value="1">Ya</option>
-                                        <option value="0">Tidak</option>
-                                    </select>
-                                    <div id="error-beton" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Kondisi Drainase</label>
-                                    <select class="form-control" name="kondisi" id="field-kondisi">
-                                        <option value="">Pilih</option>
-                                        <option value="baik">Baik</option>
-                                        <option value="sedang">Sedang</option>
-                                        <option value="rusak ringan">Rusak Ringan</option>
-                                        <option value="rusak parah">Rusak Parah</option>
-                                    </select>
-                                    <div id="error-kondisi" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Posisi Drainase</label>
-                                    <select class="form-control" name="posisi" id="field-posisi">
-                                        <option value="">Pilih</option>
-                                        <option value="kiri">Kiri Jalan</option>
-                                        <option value="kanan">Kanan Jalan</option>
-                                        <option value="kiri dan kanan">Keduanya</option>
-                                    </select>
-                                    <div id="error-posisi" class="invalid-feedback"></div>
+                                    <label class="col-form-label">Patok Akhir {{ $step2['tujuan'] }}</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="field-patok_akhir" name="patok_akhir" placeholder="Patok Awal {{ $step2['tujuan'] }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                Meter
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div id="error-panjang" class="text-danger font-size-sm"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Titik Awal</label>
@@ -95,7 +68,7 @@
                             <div class="col-lg-12">
                                 <div class="form-group row">
                                 <div class="col-md-12">
-                                    <button type="submit" class="btn btn-alt-primary btn-block"><i class="si si-check mr-5"></i>Simpan</button>
+                                    <button type="submit" class="btn btn-alt-primary btn-block"><i class="si si-check mr-5"></i>Simpan & Lanjutkan</button>
                                 </div>
                             </div>
                             </div>
@@ -169,7 +142,7 @@ lat_awal = document.querySelector('#lat_awal');
 long_awal = document.querySelector('#long_awal');
 lat_akhir = document.querySelector('#lat_akhir');
 long_akhir = document.querySelector('#long_akhir');
-pj_jalan = document.querySelector('#field-panjang');
+pj_jalan = document.querySelector('#field-patok_akhir');
 function find_closest_point_on_path(drop_pt,path_pts){
     var distances = new Array();
     var distance_keys = new Array();
@@ -228,6 +201,19 @@ function tampilRute(origin, destination, service, display) {
         }
     });
     // alert('asoo');
+}
+
+function patokAwal()
+{
+    var R = 6371;
+    var dLat = rad(p2.lat() - p1.lat());
+    var dLong = rad(p2.lng() - p1.lng());
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(rad(p1.lat())) * Math.cos(rad(p2.lat())) *
+        Math.sin(dLong / 2) * Math.sin(dLong / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return d;
 }
 
 function computeTotalDistance(result) {
