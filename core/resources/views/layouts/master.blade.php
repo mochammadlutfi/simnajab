@@ -13,8 +13,10 @@
         <link rel="stylesheet" href="{{ asset('assets/js/plugins/slick/slick-theme.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/js/plugins/datatables/dataTables.bootstrap4.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/js/plugins/sweetalert2/sweetalert2.min.css') }}">
-        <link rel="stylesheet" id="css-main" href="{{ asset('assets/css/file-input/fileinput.min.css') }}">
-        <link rel="stylesheet" id="css-main" href="{{ asset('assets/css/file-input/input_file.css') }}">
+        {{-- <link rel="stylesheet" id="css-main" href="{{ asset('assets/css/file-input/fileinput.min.css') }}">
+        <link rel="stylesheet" id="css-main" href="{{ asset('assets/css/file-input/input_file.css') }}"> --}}
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/plugins/sortable.min.js" type="text/javascript"></script> --}}
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
 
         <!-- Fonts and Codebase framework -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,400i,600,700">
@@ -80,9 +82,14 @@
         <script src="{{ asset('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('assets/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
-        <script src="{{ asset('assets/js/file-input/fileinput.js') }}"></script>
+        {{-- <script src="{{ asset('assets/js/file-input/fileinput.js') }}"></script>
         <script src="{{ asset('assets/js/file-input/theme.js') }}"></script>
-        <script src="{{ asset('assets/js/file-input/locales/id.js') }}"></script>
+        <script src="{{ asset('assets/js/file-input/locales/id.js') }}"></script> --}}
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/plugins/sortable.min.js" type="text/javascript"></script> --}}
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/fileinput.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/themes/fas/theme.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/locales/id.js"></script>
 
         <!-- Page JS Code -->
         <script src="{{ asset('assets/js/pages/be_pages_dashboard.min.js') }}"></script>

@@ -6,6 +6,7 @@ use App\Models\Jalan;
 use App\Models\Jembatan;
 use App\Models\Penganggaran;
 use Illuminate\Http\Request;
+use App\Charts\ChartPenganggaran;
 
 class BerandaController extends Controller
 {
@@ -29,7 +30,17 @@ class BerandaController extends Controller
 
         $jalan = Jalan::latest()->get();
         $jembatan = Jembatan::latest()->get();
-        $penganggaran = Penganggaran::latest()->get();
+        $penganggaran = Penganggaran::whereYear('tgl', date('Y'))->latest()->get();
+
+
+        $chart = new ChartPenganggaran;
+        $chart->labels(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'])
+        ->displayAxes('yAxes');
+        // $chart->dataset('Permohonan', 'line')
+        // ->backgroundColor('rgba(66,165,245,.25)')
+        // ->color('rgba(66,165,245,1)')
+        // ->fill(TRUE);
+
 
         return view('beranda', compact('jalan', 'jembatan', 'penganggaran'));
     }

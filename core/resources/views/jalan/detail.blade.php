@@ -235,7 +235,47 @@ $(function () {
             },
         ]
     });
+
+    $('#list-penganggaran').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "<?= route('penganggaran.data', $jalan->jalan_id); ?>",
+        columns: [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex'
+            },
+            {
+                data: 'jenis',
+                name: 'jenis'
+            },
+            {
+                data: 'tujuan',
+                name: 'tujuan'
+            },
+            {
+                data: 'perusahaan',
+                name: 'perusahaan'
+            },
+            {
+                data: 'nomor_bast',
+                name: 'nomor_bast'
+            },
+            {
+                data: 'anggaran',
+                name: 'anggaran'
+            },
+            {
+                data: 'tgl',
+                name: 'tgl'
+            },
+        ]
+    });
 });
+function detail_penganggaran(id) {
+    var url = '{{ route("penganggaran.detail", ":id") }}';
+    url = url.replace(':id', id);
+    document.location.href=url;
+}
 </script>
 {!! $map['js'] !!}
 {{-- <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyCeQBvgWWU9QI4ca0E8vB3XEPr11rOGv7k&libraries=drawing,places"></script> --}}

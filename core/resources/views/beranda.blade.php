@@ -34,7 +34,7 @@
                         <i class="si si-briefcase fa-3x text-body-bg-dark"></i>
                     </div>
                     <div class="font-size-h3 font-w600" data-toggle="countTo" data-speed="1000" data-to="{{ $penganggaran->count() }}">0</div>
-                    <div class="font-size-sm font-w600 text-uppercase text-muted">Total Penganggaran</div>
+                    <div class="font-size-sm font-w600 text-uppercase text-muted">Penganggaran Tahun Ini</div>
                 </div>
             </a>
         </div>

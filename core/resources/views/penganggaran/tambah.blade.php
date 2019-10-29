@@ -5,8 +5,9 @@
 <div class="content">
     <nav class="breadcrumb bg-white push">
         <a class="breadcrumb-item" href="{{ route('beranda') }}">Beranda</a>
-        <a class="breadcrumb-item" href="{{ route('penganggaran') }}">Penganggaran</a>
-        <span class="breadcrumb-item active">Tambah</span>
+        <a class="breadcrumb-item" href="{{ route('jalan') }}">Rute Jalan</a>
+        <a class="breadcrumb-item" href="{{ route('jalan.detail', $jalan->jalan_id) }}">{{ $jalan->nama }}</a>
+        <span class="breadcrumb-item active">Tambah Penganggaran</span>
     </nav>
     <div class="block">
         <div class="block-header block-header-default">
@@ -40,7 +41,7 @@
                                 <div id="error-jenis" class="text-danger"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="field-tujuan">
                             <label class="col-lg-3 col-form-label">Tujuan</label>
                             <div class="col-9">
                                 <div class="custom-control custom-radio custom-control-inline mb-5">
@@ -121,6 +122,7 @@ jQuery(document).ready(function () {
         startDate: 'today'
     });
 
+
     $("#form-penganggaran").submit(function (e) {
         e.preventDefault();
         var formData = new FormData($('#form-penganggaran')[0]);
@@ -136,17 +138,49 @@ jQuery(document).ready(function () {
                 $('.is-invalid').removeClass('is-invalid');
                 if (response.fail == false) {
                     $('#modal_embed').modal('hide');
-                    swal({
-                        title: "Berhasil",
-                        text: "Berhasil data Berhasil Disimpan",
-                        timer: 3000,
-                        buttons: false,
-                        icon: 'success'
-                    });
+                    // swal({
+                    //     title: "Berhasil",
+                    //     text: "Berhasil data Berhasil Disimpan",
+                    //     timer: 3000,
+                    //     buttons: false,
+                    //     icon: 'success'
+                    // });
                     window.setTimeout(function(){
                         window.location = response.step2;
                     });
                 } else {
+                    if(response.jembatan == false)
+                    {
+                        swal({
+                            title: "Jembatan Tidak Ditemukan",
+                            text: "Silahkan Tambahkan Data Jembatan Terlebih Dahulu",
+                            timer: 3000,
+                            buttons: false,
+                            icon: 'warning'
+                        });
+                    }
+
+                    if(response.tpt == false)
+                    {
+                        swal({
+                            title: "TPT Tidak Ditemukan",
+                            text: "Silahkan Tambahkan Data Jembatan Terlebih Dahulu",
+                            timer: 3000,
+                            buttons: false,
+                            icon: 'warning'
+                        });
+                    }
+
+                    if(response.drainase == false)
+                    {
+                        swal({
+                            title: "Drainase Tidak Ditemukan",
+                            text: "Silahkan Tambahkan Data Drainase Terlebih Dahulu",
+                            timer: 3000,
+                            buttons: false,
+                            icon: 'warning'
+                        });
+                    }
                     for (control in response.errors) {
                         $('#field-' + control).addClass('is-invalid');
                         $('#error-' + control).html(response.errors[control]);

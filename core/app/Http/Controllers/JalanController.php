@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AngJalan;
 use App\Models\TPT;
 use App\Models\Jalan;
 use App\Models\Jembatan;
@@ -180,7 +181,7 @@ class JalanController extends Controller
         $jembatan = Jembatan::where('jalan_id', $jalan->jalan_id)->latest()->get();
         $tpt = TPT::where('jalan_id', $jalan->jalan_id)->latest()->get();
         $drainase = Drainase::where('jalan_id', $jalan->jalan_id)->latest()->get();
-
+        $anggaran = AngJalan::where('jalan_id', $jalan->jalan_id)->latest()->get();
         $config['center'] = $jalan->lat_akhir.', '.$jalan->lng_akhir;
         $config['zoom'] = '13';
         $config['map_height'] = '630px';
@@ -204,7 +205,7 @@ class JalanController extends Controller
         $array = array_filter(explode('|',$c));
         $polyline['points'] = $array;
         $polyline['infowindow_content'] = '1 - Hello World!';
-        $polyline['strokeWeight'] = 5;
+        $polyline['strokeWeight'] = 6;
         $polyline['strokeColor'] = 'blue';
         $gmap->add_polyline($polyline);
 
@@ -220,6 +221,30 @@ class JalanController extends Controller
                 $gmap->add_marker($marker);
             }
         }
+
+        if($anggaran->count() > 0)
+        {
+            foreach($anggaran as $a)
+            {
+                if($a->penganggaran->tujuan == 'Pemeliharaan')
+                {
+                    $warna = 'Green';
+                }else{
+                    $warna = 'Orange';
+                }
+                $polyline = array();
+                $c = str_replace('(', '', $a->polypath);
+                $c = str_replace('),', '|', $c);
+                $c = str_replace(')', '|', $c);
+                $array = array_filter(explode('|',$c));
+                $polyline['points'] = $array;
+                // $polyline['infowindow_content'] = ''. $a->penganggaran->tujuan.'';
+                $polyline['strokeWeight'] = 5;
+                $polyline['strokeColor'] = $warna;
+                $gmap->add_polyline($polyline);
+            }
+        }
+
 
         // if($tpt->count() > 0)
         // {

@@ -18,14 +18,14 @@
             @endrole
         </div>
         <div class="block-content">
-            <table class="table table-hover table-striped" id="list-jalan">
+            <table class="table table-hover table-striped" id="list-jalan" style="font-size:12px">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama Ruas Jalan</th>
                         <th>Panjang</th>
                         <th>Lebar</th>
-                        <th>Kondisi</th>
+                        <th>Penganggaran Terakhir</th>
                         <th></th>
                     </tr>
                 </thead>

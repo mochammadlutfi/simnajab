@@ -60,6 +60,7 @@ return [
         FarhanWazir\GoogleMaps\GMapsServiceProvider::class,
         Cornford\Googlmapper\MapperServiceProvider::class,
         Lord\Laroute\LarouteServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -68,6 +69,10 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        /*
+         * Helper Service Providers...
+         */
+        App\Providers\HelperServiceProvider::class,
 
     ],
 
@@ -124,6 +129,9 @@ return [
         'GMaps' => FarhanWazir\GoogleMaps\Facades\GMapsFacade::class,
         'Mapper' => Cornford\Googlmapper\Facades\MapperFacade::class,
 
+        // Helper
+        'GeneralHelp' => App\Helpers\GeneralHelp::class,
+        'MapJembatan' => App\Helpers\MapJembatan::class,
     ],
 
 ];

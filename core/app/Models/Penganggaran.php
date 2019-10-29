@@ -15,12 +15,16 @@ class Penganggaran extends Model
      * @var array
      */
     protected $fillable = [
-        'jalan_id', 'tujuan' , 'perusahaan', 'nomor_bast', 'jml_anggaran', 'tgl'
+        'rute_id', 'tujuan' , 'perusahaan', 'nomor_bast', 'jml_anggaran', 'tgl'
     ];
 
+    public function AngJalan()
+    {
+        return $this->hasOne('App\Models\AngJalan', 'penganggaran_id', 'id');
+    }
 
     public function jalan()
     {
-        return $this->belongsTo('App\Models\Jalan', 'jalan_id', 'jalan_id');
+        return $this->belongsTo('App\Models\Jalan', 'rute_id', 'jalan_id');
     }
 }

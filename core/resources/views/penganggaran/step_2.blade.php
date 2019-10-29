@@ -7,21 +7,22 @@
         <a class="breadcrumb-item" href="{{ route('beranda') }}">Beranda</a>
         <a class="breadcrumb-item" href="{{ route('jalan') }}">Rute Jalan</a>
         <a class="breadcrumb-item" href="{{ route('jalan.detail', $jalan->jalan_id) }}">{{ $jalan->nama }}</a>
-        <span class="breadcrumb-item active">Tambah Data Drainase</span>
+        <span class="breadcrumb-item active">Tambah Penganggaran</span>
     </nav>
     <div class="block">
         <div class="block-header block-header-default">
-            <h3 class="block-title">Tambah Data Drainase <small>{{ $jalan->nama }}</small></h3>
+            <h3 class="block-title">Tambah Penganggaran <small>{{ $jalan->nama }}</small></h3>
         </div>
         <div class="block-content pb-15">
             <div class="row">
                 <div class="col-lg-4">
-                    <form id="form-drainase" class="form-horizontal" onsubmit="return false;">
-                        <input type="hidden" name="jalan_id" value="{{ $jalan->jalan_id }}">
+                    <form id="form-step2" class="form-horizontal" onsubmit="return false;">
                         <input type="hidden" name="lat_awal" id="lat_awal" value="">
                         <input type="hidden" name="long_awal" id="long_awal" value="">
                         <input type="hidden" name="lat_akhir" id="lat_akhir" value="">
                         <input type="hidden" name="long_akhir" id="long_akhir" value="">
+                        <input type="hidden" name="longlat1" id="field-longlat1" value="">
+                        <input type="hidden" name="longlat2" id="field-longlat2" value="">
                         @csrf
                         <div class="row">
                             <div class="col-lg-12">
@@ -35,7 +36,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div id="error-panjang" class="text-danger font-size-sm"></div>
+                                    <div id="error-patok_awal" class="text-danger font-size-sm"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Patok Akhir {{ $step2['tujuan'] }}</label>
@@ -47,16 +48,28 @@
                                             </span>
                                         </div>
                                     </div>
+                                    <div id="error-patok_akhir" class="text-danger font-size-sm"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Panjang {{ $step2['tujuan'] }}</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="field-panjang" name="panjang" placeholder="Panjang {{ $step2['tujuan'] }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                Meter
+                                            </span>
+                                        </div>
+                                    </div>
                                     <div id="error-panjang" class="text-danger font-size-sm"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Titik Awal</label>
-                                    <input type="text" class="form-control" name="longlat1" id="field-longlat1" readonly>
+                                    <label class="col-form-label">Keterangan Tambahan (Jika Ada)</label>
+                                    <textarea class="form-control" name="keterangan" placeholder="Masukan Keterangan Tambahan"></textarea>
                                     <div id="error-longlat2" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Titik Akhir</label>
-                                    <input type="text" class="form-control" name="longlat2" id="field-longlat2" readonly>
+                                    <label class="col-form-label">Upload Dokumen</label>
+                                    <input id="field-berkas" name="files[]" type="file" class="file" data-preview-file-type="text">
                                     <div id="error-longlat2" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
@@ -93,12 +106,12 @@
 <script>
 jQuery(document).ready(function () {
 
-    $("#form-drainase").submit(function (e) {
+    $("#form-step2").submit(function (e) {
         e.preventDefault();
-        var formData = new FormData($('#form-drainase')[0]);
+        var formData = new FormData($('#form-step2')[0]);
 
         $.ajax({
-            url: "{{ route('drainase.simpan') }}",
+            url: "{{ route('penganggaran.step2', $jalan->jalan_id) }}",
             type: 'post',
             data: formData,
             cache: false,
@@ -134,7 +147,6 @@ jQuery(document).ready(function () {
         });
     });
 });
-
 longlat1 = document.querySelector('#field-longlat1');
 longlat2 = document.querySelector('#field-longlat2');
 polypath = document.querySelector('#polypath');
@@ -142,8 +154,11 @@ lat_awal = document.querySelector('#lat_awal');
 long_awal = document.querySelector('#long_awal');
 lat_akhir = document.querySelector('#lat_akhir');
 long_akhir = document.querySelector('#long_akhir');
-pj_jalan = document.querySelector('#field-patok_akhir');
-function find_closest_point_on_path(drop_pt,path_pts){
+pj_jalan = document.querySelector('#field-panjang');
+patok_awal =  document.querySelector('#field-patok_awal');
+patok_akhir = document.querySelector('#field-patok_akhir');
+function find_closest_point_on_path(drop_pt,path_pts)
+{
     var distances = new Array();
     var distance_keys = new Array();
 
@@ -168,15 +183,11 @@ function find_closest_point_on_path(drop_pt,path_pts){
         // console.log(distances);
     });
     //Return the latLng obj of the second closest point to the markers drag origin. If this point doesn't exist snap it to the actual closest point as this should always exist
-    return (typeof path_pts[distance_keys[_.min(distances)]+1] === 'undefined')?path_pts[distance_keys[_.min(distances)]]:path_pts[distance_keys[_.min(distances)]+1];
+    return (typeof [distance_keys[_.min(distances)]+1] === 'undefined')?path_pts[distance_keys[_.min(distances)]]:path_pts[distance_keys[_.min(distances)]+1];
     if (typeof(Number.prototype.toRad) === "undefined") {
       Number.prototype.toRad = function() {
         return this * Math.PI / 180;
       }
-    }
-    function convert_rad(datanya)
-    {
-        return datanya * Math.PI / 180;
     }
 }
 function tampilRute(origin, destination, service, display) {
@@ -203,17 +214,29 @@ function tampilRute(origin, destination, service, display) {
     // alert('asoo');
 }
 
-function patokAwal()
+
+function convert_rad(datanya)
 {
-    var R = 6371;
-    var dLat = rad(p2.lat() - p1.lat());
-    var dLong = rad(p2.lng() - p1.lng());
+    return datanya * Math.PI / 180;
+}
+
+function hitung_jarak(p1, p2)
+{
+    var R = 6378137;
+    var dLat = convert_rad(p2.lat() - p1.lat());
+    var dLong = convert_rad(p2.lng() - p1.lng());
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(rad(p1.lat())) * Math.cos(rad(p2.lat())) *
+        Math.cos(convert_rad(p1.lat())) * Math.cos(convert_rad(p2.lat())) *
         Math.sin(dLong / 2) * Math.sin(dLong / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c;
-    return d;
+    // patok_awal.value = d.toFixed();
+    return d.toFixed();
+    if (typeof(Number.prototype.toRad) === "undefined") {
+      Number.prototype.toRad = function() {
+        return this * Math.PI / 180;
+      }
+    }
 }
 
 function computeTotalDistance(result) {
@@ -238,12 +261,13 @@ function computeTotalDistance(result) {
             }
         }
     }
-    // total = total / 1000;
-    // console.log(coba);
     pj_jalan.value = total;
     polyline.setMap(map);
     polypath.value = polyline.getPath().getArray().toString();
 }
 </script>
 {!! $map['js'] !!}
+<script>
+    var start_jalan = new google.maps.LatLng('{{ $jalan->lat_awal }}', '{{ $jalan->lng_awal }}');
+</script>
 @endpush

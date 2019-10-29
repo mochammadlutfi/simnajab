@@ -16,100 +16,17 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Ruas Jalan</th>
+                        <th>Ruas Jalan</th>
+                        <th>Jenis</th>
                         <th>Tujuan</th>
                         <th>Perusahaan</th>
                         <th>No. BAST</th>
                         <th>Anggaran</th>
                         <th>Tgl</th>
-                        {{-- <th></th> --}}
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="modal_form" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="block block-rounded mb-0">
-                <div class="block-header bg-alt-secondary">
-                    <h3 class="block-title" id="modal_title">Form Title</h3>
-                    <div class="block-options">
-                        <button type="button" class="btn-block-option" data-dismiss="modal" aria-label="Close">
-                            <i class="si si-close"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="block-content pt-0">
-                    <form id="form-penganggaran" class="form-horizontal">
-                        @csrf
-                        <input type="hidden" name="penganggaran_id" value="">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label class="col-form-label">Nama Jalan</label>
-                                    <select class="js-select2 form-control" id="field-jalan_id" name="jalan_id" style="width: 100%;" data-placeholder="Pilih Ruas Jalan..">
-                                        <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                                        @foreach ($jalan as $j)
-                                            <option value="{{ $j->jalan_id }}">{{ $j->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="error-jalan_id" class="text-danger font-size-sm"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Tujuan Penganggaran</label>
-                                    <select class="form-control" name="tujuan" id="field-tujuan">
-                                        <option value="">Pilih</option>
-                                        <option value="jalan">Jalan</option>
-                                        <option value="jembatan">Jembatan</option>
-                                        <option value="TPT">TPT</option>
-                                        <option value="drainase">Drainase</option>
-                                    </select>
-                                    <div id="error-tujuan" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Perusahaan</label>
-                                    <input type="text" class="form-control" id="field-perusahaan" name="perusahaan" placeholder="Masukan Nama Perusahaan">
-                                    <div id="error-perusahaan" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Nomor BAST (Berita Acara Serah Terima)</label>
-                                    <input type="text" class="form-control" id="field-nomor_bast" name="nomor_bast" placeholder="Masukan Nomor BAST">
-                                    <div id="error-nomor_bast" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Jumlah Anggaran</label>
-                                    <div class="input-group">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    Rp.
-                                                </span>
-                                            </div>
-                                        <input type="number" class="form-control" id="field-jml_anggaran" name="jml_anggaran" placeholder="Masukan Jumlah Anggaran">
-                                    </div>
-                                    <div id="error-jml_anggaran" class="text-danger font-size-sm"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Tanggal Penganggaran</label>
-                                    <input type="text" class="form-control" id="field-tgl" name="tgl" placeholder="Masukan Tanggal Penganggaran" autocomplete="off">
-                                    <div id="error-tgl" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="form-group row">
-                                <div class="col-md-12">
-                                    <button type="submit" class="btn btn-alt-primary btn-block"><i class="si si-check mr-5"></i>Simpan</button>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -131,6 +48,10 @@ $(function () {
                 name: 'jalan'
             },
             {
+                data: 'jenis',
+                name: 'jenis'
+            },
+            {
                 data: 'tujuan',
                 name: 'tujuan'
             },
@@ -150,12 +71,6 @@ $(function () {
                 data: 'tgl',
                 name: 'tgl'
             },
-            // {
-            //     data: 'action',
-            //     name: 'action',
-            //     orderable: false,
-            //     searchable: false
-            // },
         ]
     });
 });
@@ -303,6 +218,11 @@ function hapus(id) {
             } ,1500);
         }
     });
+}
+function detail(id) {
+    var url = '{{ route("penganggaran.detail", ":id") }}';
+    url = url.replace(':id', id);
+    document.location.href=url;
 }
 </script>
 @endpush
