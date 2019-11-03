@@ -132,6 +132,12 @@ return [
         // Helper
         'GeneralHelp' => App\Helpers\GeneralHelp::class,
         'MapJembatan' => App\Helpers\MapJembatan::class,
+        'MapTPT' => App\Helpers\MapTPT::class,
+        'MapDrainase' => App\Helpers\MapDrainase::class,
+        'MapJalan' => App\Helpers\MapJalan::class,
+        'MapBeton' => App\Helpers\MapBeton::class,
+        'PenganggaranHelp' => App\Helpers\PenganggaranHelp::class,
+
     ],
 
 ];

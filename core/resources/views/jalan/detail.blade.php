@@ -34,32 +34,47 @@
                 <div class="row py-10 px-0">
                     <div class="col-6 col-md-4">
                         <p>
-                            <i class="fa fa-fw fa-bed text-muted mr-5"></i> <strong>Panjang Jalan </strong> {{ $jalan->panjang }} Meter
+                            <i class="si si-graph text-muted mr-5"></i> <strong>Panjang Jalan </strong> {{ $jalan->panjang }} <small>Meter</small>
                         </p>
                     </div>
                     <div class="col-6 col-md-4">
                         <p>
-                            <i class="fa fa-fw fa-bath text-muted mr-5"></i> <strong>Lebar Jalan</strong> {{ $jalan->lebar }} Meter
+                            <i class="fa fa-fw fa-arrows-alt text-muted mr-5"></i> <strong>Lebar Jalan</strong> {{ $jalan->lebar }} <small>Meter</small>
                         </p>
                     </div>
                     <div class="col-6 col-md-4">
                         <p>
-                            <i class="fa fa-fw fa-car text-muted mr-5"></i> <strong> 0 Jembatan</strong>
+                            <i class="si si-anchor text-muted mr-5"></i> <strong> {{ $jembatan->count() }} Jembatan</strong>
                         </p>
                     </div>
                     <div class="col-6 col-md-4">
                         <p>
-                            <i class="fa fa-fw fa-arrows-alt text-muted mr-5"></i> <strong>Panjang Flat Beton</strong>
+                            <i class="si si-layers text-muted mr-5"></i> <strong>{{ $beton->count() }} Flat Beton</strong>
                         </p>
                     </div>
                     <div class="col-6 col-md-4">
                         <p>
-                            <i class="fa fa-fw fa-fire text-muted mr-5"></i> <strong>Panjang Drainase</strong>
+                            <i class="si si-drop text-muted mr-5"></i> <strong>{{ $drainase->count() }} Drainase</strong>
                         </p>
                     </div>
                     <div class="col-6 col-md-4">
                         <p>
-                            <i class="fa fa-fw fa-globe text-muted mr-5"></i> <strong>Penganggaran Terakhir</strong>
+                            <i class="si si-briefcase text-muted mr-5"></i> <strong>{{ $penganggaran->count() }} Penganggaran</strong>
+                        </p>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <p>
+                            <i class="si si-drawer text-muted mr-5"></i> <strong>{{ $tpt->count() }} TPT</strong>
+                        </p>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <p>
+                            <i class="si si-drop text-muted mr-5"></i> <strong>NJOP Rp. 21 / meter</strong>
+                        </p>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <p>
+                            <i class="si si-briefcase text-muted mr-5"></i> <strong>Penganggaran Terakhir <small> {{ $penganggaran_last->tgl }} </small></strong>
                         </p>
                     </div>
                 </div>
@@ -71,23 +86,23 @@
                 </div>
             </div>
             {{-- Data TPT Jalan --}}
-            @include('jalan.incl_tpt')
+            @include('jalan.include.tpt')
             {{-- END Data TPT Jalan --}}
 
             {{-- Data TPT Jalan --}}
-            @include('jalan.incl_drainase')
+            @include('jalan.include.drainase')
             {{-- END Data TPT Jalan --}}
 
             {{-- Data Flat Beton Jalan --}}
-            @include('jalan.incl_beton')
+            @include('jalan.include.beton')
             {{-- END Data Flat Beton Jalan --}}
 
             {{-- Data Jembatan Jalan --}}
-            @include('jalan.incl_jembatan')
+            @include('jalan.include.jembatan')
             {{-- END Data Jembatan Jalan --}}
 
             {{-- Data Jembatan Jalan --}}
-            @include('jalan.incl_penganggaran')
+            @include('jalan.include.penganggaran')
             {{-- END Data Jembatan Jalan --}}
         </div>
     </div>
@@ -218,6 +233,10 @@ $(function () {
             {
                 data: 'nama',
                 name: 'nama'
+            },
+            {
+                data: 'panjang',
+                name: 'panjang'
             },
             {
                 data: 'kondisi',

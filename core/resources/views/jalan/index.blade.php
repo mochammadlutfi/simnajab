@@ -25,6 +25,7 @@
                         <th>Nama Ruas Jalan</th>
                         <th>Panjang</th>
                         <th>Lebar</th>
+                        <th>Penganggaran Tahun Ini</th>
                         <th>Penganggaran Terakhir</th>
                         <th></th>
                     </tr>
@@ -34,82 +35,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="modal_form" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="block block-transparent mb-0">
-                <div class="block-header bg-alt-secondary">
-                    <h3 class="block-title" id="modal_title">Form Title</h3>
-                    <div class="block-options">
-                        <button type="button" class="btn-block-option" data-dismiss="modal" aria-label="Close">
-                            <i class="si si-close"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="block-content">
-                    <form id="form-jalan" class="form-horizontal">
-                        <input type="hidden" name="jalan_id" value="">
-                        @csrf
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label class="col-form-label">Nama Jalan</label>
-                                    <input type="text" class="form-control" name="nama" id="field-nama" placeholder="Masukan Nama Ruas Jalan">
-                                    <div id="error-nama" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Panjang</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="field-panjang" name="panjang" placeholder="Masukan Panjang Jalan">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">
-                                                Meter
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div id="error-panjang" class="text-danger font-size-sm"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Lebar</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="field-lebar" name="lebar" placeholder="Masukan Lebar Jalan">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">
-                                                Meter
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div id="error-lebar" class="text-danger font-size-sm"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Kondisi Jalan</label>
-                                    <select class="form-control" name="kondisi" id="field-kondisi">
-                                        <option value="">Pilih</option>
-                                        <option value="baik">Baik</option>
-                                        <option value="sedang">Sedang</option>
-                                        <option value="rusak ringan">Rusak Ringan</option>
-                                        <option value="rusak parah">Rusak Ringan</option>
-                                    </select>
-                                    <div id="error-kondisi" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="form-group row">
-                                <div class="col-md-12">
-                                    <button type="submit" class="btn btn-alt-primary btn-block"><i class="si si-check mr-5"></i>Simpan</button>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 @stop
 @push('scripts')
 <script>
@@ -135,8 +60,12 @@ $(function () {
                 name: 'lebar'
             },
             {
-                data: 'kondisi',
-                name: 'kondisi'
+                data: 'ang_tahun',
+                name: 'ang_tahun'
+            },
+            {
+                data: 'ang_last',
+                name: 'ang_last'
             },
             {
                 data: 'action',

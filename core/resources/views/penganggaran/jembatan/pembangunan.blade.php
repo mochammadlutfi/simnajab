@@ -41,6 +41,17 @@
                                     <div id="error-panjang" class="text-danger font-size-sm"></div>
                                 </div>
                                 <div class="form-group">
+                                    <label class="col-form-label">Kondisi Jembatan</label>
+                                    <select class="form-control" name="kondisi" id="field-kondisi">
+                                        <option value="">Pilih</option>
+                                        <option value="baik">Baik</option>
+                                        <option value="sedang">Sedang</option>
+                                        <option value="rusak ringan">Rusak Ringan</option>
+                                        <option value="rusak parah">Rusak Parah</option>
+                                    </select>
+                                    <div id="error-kondisi" class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group">
                                     <label class="col-form-label">Koordinat Jembatan</label>
                                     <input type="text" class="form-control" name="longlat1" id="field-longlat1" readonly>
                                     <div id="error-longlat2" class="invalid-feedback"></div>

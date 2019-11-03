@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dokumen;
 use App\Models\Jalan;
-use App\Models\User;
+use App\Models\Penganggaran;
 use App\Models\Drainase;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\AngDrainase;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use FarhanWazir\GoogleMaps\GMaps;
@@ -192,24 +194,130 @@ class DrainaseController extends Controller
                 'errors' => $validator->errors()
             ]);
         }else{
-
-            $data = new Drainase();
-            $data->jalan_id = $request->jalan_id;
-            $data->pasang_batu = $request->pasang_batu;
-            $data->beton = $request->beton;
-            $data->kondisi = $request->kondisi;
-            $data->posisi = $request->posisi;
-            $data->panjang = $request->panjang;
-            $data->lat_awal = $request->lat_awal;
-            $data->lng_awal = $request->long_awal;
-            $data->lat_akhir = $request->lat_akhir;
-            $data->lng_akhir = $request->long_akhir;
-            $data->polyline = $request->polypath;
+            // dd($request->all());
+            $step1 = $request->session()->get('penganggaran');
+            $data = new Penganggaran();
+            $data->rute_id = $step1['jalan_id'];
+            $data->jenis =  $step1['jenis'];
+            $data->tujuan =  $step1['tujuan'];
+            $data->perusahaan =  $step1['perusahaan'];
+            $data->nomor_bast =  $step1['nomor_bast'];
+            $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
+            $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->keterangan = $request->keterangan;
             if($data->save())
             {
-                return response()->json([
-                    'fail' => false,
-                ]);
+                if($request->hasfile('files'))
+                {
+                    foreach($request->file('files') as $f)
+                    {
+
+                        $ext = $f->getClientOriginalExtension();
+                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
+                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
+
+                        $file = array(
+                            'penganggaran_id' => $data->id,
+                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                        );
+                        Dokumen::insert($file);
+                    }
+                }
+
+                $drainase = new Drainase();
+                $drainase->jalan_id = $request->jalan_id;
+                $drainase->penganggaran_id = $data->id;
+                $drainase->pasang_batu = $request->pasang_batu;
+                $drainase->beton = $request->beton;
+                $drainase->kondisi = $request->kondisi;
+                $drainase->posisi = $request->posisi;
+                $drainase->panjang = $request->panjang;
+                $drainase->patok_awal = $request->patok_awal;
+                $drainase->patok_akhir = $request->patok_akhir;
+                $drainase->lat_awal = $request->lat_awal;
+                $drainase->lng_awal = $request->long_awal;
+                $drainase->lat_akhir = $request->lat_akhir;
+                $drainase->lng_akhir = $request->long_akhir;
+                $drainase->polyline = $request->polypath;
+                if($drainase->save())
+                {
+                    $request->session()->forget('penganggaran');
+                    return response()->json([
+                        'fail' => false,
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function pemeliharaan(Request $request)
+    {
+
+        $rules = [
+            'panjang' => 'required',
+        ];
+
+        $pesan = [
+            'panjang.required' => 'Panjang Drainase Wajib Diisi!',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $pesan);
+        if ($validator->fails()){
+            return response()->json([
+                'fail' => true,
+                'errors' => $validator->errors()
+            ]);
+        }else{
+            // dd($request->all());
+            $step1 = $request->session()->get('penganggaran');
+            // dd($step1['penganggaran']);
+            $data = new Penganggaran();
+            $data->rute_id = $step1['jalan_id'];
+            $data->jenis =  $step1['jenis'];
+            $data->tujuan =  $step1['tujuan'];
+            $data->perusahaan =  $step1['perusahaan'];
+            $data->nomor_bast =  $step1['nomor_bast'];
+            $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
+            $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->keterangan = $request->keterangan;
+            if($data->save())
+            {
+                if($request->hasfile('files'))
+                {
+                    foreach($request->file('files') as $f)
+                    {
+
+                        $ext = $f->getClientOriginalExtension();
+                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
+                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
+
+                        $file = array(
+                            'penganggaran_id' => $data->id,
+                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                        );
+                        Dokumen::insert($file);
+                    }
+                }
+
+                $drainase = new AngDrainase();
+                $drainase->drainase_id = $step1['penganggaran'];
+                $drainase->penganggaran_id = $data->id;
+                $drainase->panjang = $request->panjang;
+                $drainase->patok_awal = $request->patok_awal;
+                $drainase->patok_akhir = $request->patok_akhir;
+                $drainase->lat_awal = $request->lat_awal;
+                $drainase->lng_awal = $request->long_awal;
+                $drainase->lat_akhir = $request->lat_akhir;
+                $drainase->lng_akhir = $request->long_akhir;
+                $drainase->polyline = $request->polypath;
+                if($drainase->save())
+                {
+                    $request->session()->forget('penganggaran');
+                    return response()->json([
+                        'fail' => false,
+                        'url' => route('penganggaran.detail', $data->id)
+                    ]);
+                }
             }
         }
     }

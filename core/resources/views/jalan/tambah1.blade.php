@@ -21,6 +21,9 @@
                         <input type="hidden" name="long_awal" id="long_awal" value="">
                         <input type="hidden" name="lat_akhir" id="lat_akhir" value="">
                         <input type="hidden" name="long_akhir" id="long_akhir" value="">
+                        <input type="hidden" name="longlat1" id="field-longlat1">
+                        <input type="hidden" name="longlat2" id="field-longlat2">
+                        <input type="hidden" class="form-control" id="polypath" name="polypath">
                         @csrf
                         <div class="row">
                             <div class="col-lg-12">
@@ -65,17 +68,21 @@
                                     <div id="error-kondisi" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Titik Awal</label>
-                                    <input type="text" class="form-control" name="longlat1" id="field-longlat1" readonly>
-                                    <div id="error-longlat2" class="invalid-feedback"></div>
+                                    <label class="col-form-label">Nilai NJOP</label>
+                                    <div class="input-group">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">
+                                                    Rp.
+                                                </span>
+                                            </div>
+                                        <input type="number" class="form-control" id="field-jml_anggaran" name="jml_anggaran" placeholder="Masukan Nilai NJOP">
+                                    </div>
+                                    <div id="error-jml_anggaran" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Titik Akhir</label>
-                                    <input type="text" class="form-control" name="longlat2" id="field-longlat2" readonly>
-                                    <div id="error-longlat2" class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="hidden" class="form-control" id="polypath" name="polypath">
+                                    <label class="col-form-label">Keterangan Tambahan</label>
+                                    <textarea class="form-control" name="keterangan" rows="9"></textarea>
+                                    <div id="error-keterangan" class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>

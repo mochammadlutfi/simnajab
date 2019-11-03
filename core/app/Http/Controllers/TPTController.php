@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AngTPT;
+use App\Models\Dokumen;
 use App\Models\Jalan;
-use App\Models\User;
+use App\Models\Penganggaran;
 use App\Models\TPT;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -240,23 +242,134 @@ class TPTController extends Controller
             ]);
         }else{
 
-            $data = new TPT();
-            $data->jalan_id = $request->jalan_id;
-            $data->panjang = $request->panjang;
-            $data->pasang_batu = $request->pasang_batu;
-            $data->beton = $request->beton;
-            $data->kondisi = $request->kondisi;
-            $data->posisi = $request->posisi;
-            $data->lat_awal = $request->lat_awal;
-            $data->lng_awal = $request->long_awal;
-            $data->lat_akhir = $request->lat_akhir;
-            $data->lng_akhir = $request->long_akhir;
-            $data->polyline = $request->polypath;
+            $step1 = $request->session()->get('penganggaran');
+            $data = new Penganggaran();
+            $data->rute_id = $step1['jalan_id'];
+            $data->jenis =  $step1['jenis'];
+            $data->tujuan =  $step1['tujuan'];
+            $data->perusahaan =  $step1['perusahaan'];
+            $data->nomor_bast =  $step1['nomor_bast'];
+            $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
+            $data->jml_anggaran = $step1['jml_anggaran'];
+            // $data->jml_anggaran = 123123;
             if($data->save())
             {
-                return response()->json([
-                    'fail' => false,
-                ]);
+                if($request->hasfile('files'))
+                {
+                    foreach($request->file('files') as $f)
+                    {
+
+                        $ext = $f->getClientOriginalExtension();
+                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
+                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
+
+                        $file = array(
+                            'penganggaran_id' => $data->id,
+                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                        );
+                        Dokumen::insert($file);
+                    }
+                }
+
+                $tpt = new TPT();
+                $tpt->penganggaran_id = $data->id;
+                $tpt->jalan_id = $request->jalan_id;
+                $tpt->panjang = $request->panjang;
+                $tpt->patok_awal = $request->patok_awal;
+                $tpt->patok_akhir = $request->patok_akhir;
+                $tpt->pasang_batu = $request->pasang_batu;
+                $tpt->beton = $request->beton;
+                $tpt->kondisi = $request->kondisi;
+                $tpt->posisi = $request->posisi;
+                $tpt->lat_awal = $request->lat_awal;
+                $tpt->lng_awal = $request->long_awal;
+                $tpt->lat_akhir = $request->lat_akhir;
+                $tpt->lng_akhir = $request->long_akhir;
+                $tpt->polyline = $request->polypath;
+                if($tpt->save())
+                {
+                    $request->session()->forget('penganggaran');
+                    return response()->json([
+                        'fail' => false,
+                    ]);
+                }
+            }
+
+        }
+    }
+
+    public function penganggaran(Request $request)
+    {
+        $step1 = $request->session()->get('penganggaran');
+        $rules = [
+            'panjang' => 'required',
+            'patok_awal' => 'required',
+            'patok_akhir' => 'required',
+        ];
+
+        $pesan = [
+            'panjang.required' => 'Panjang '. $step1['tujuan'] .' TPT Wajib Diisi!',
+            'patok_awal.required' => 'Patok Awal '. $step1['tujuan'] .' TPT Wajib Diisi!',
+            'patok_akhir.required' => 'Patok Akhir '. $step1['tujuan'] .' TPT Wajib Diisi!',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $pesan);
+        if ($validator->fails()){
+            return response()->json([
+                'fail' => true,
+                'errors' => $validator->errors()
+            ]);
+        }else{
+            // dd($request->all());
+            // dd($step1['penganggaran']);
+            $data = new Penganggaran();
+            $data->rute_id = $step1['jalan_id'];
+            $data->jenis =  $step1['jenis'];
+            $data->tujuan =  $step1['tujuan'];
+            $data->perusahaan =  $step1['perusahaan'];
+            $data->nomor_bast =  $step1['nomor_bast'];
+            $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
+            $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->keterangan = $request->keterangan;
+            if($data->save())
+            {
+                if($request->hasfile('files'))
+                {
+                    foreach($request->file('files') as $f)
+                    {
+
+                        $ext = $f->getClientOriginalExtension();
+                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
+                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
+
+                        $file = array(
+                            'penganggaran_id' => $data->id,
+                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                        );
+                        Dokumen::insert($file);
+                    }
+                }
+
+                $tpt = new AngTPT();
+                $tpt->tpt_id = $step1['penganggaran'];
+                $tpt->penganggaran_id = $data->id;
+                $tpt->panjang = $request->panjang;
+                $tpt->patok_awal = $request->patok_awal;
+                $tpt->patok_akhir = $request->patok_akhir;
+                $tpt->lat_awal = $request->lat_awal;
+                $tpt->lng_awal = $request->long_awal;
+                $tpt->lat_akhir = $request->lat_akhir;
+                $tpt->lng_akhir = $request->long_akhir;
+                $tpt->polyline = $request->polypath;
+                if($tpt->save())
+                {
+                    $request->session()->forget('penganggaran');
+                    return response()->json([
+                        'fail' => false,
+                        'text' => 'Penganggaran '. $step1['tujuan'] .' TPT Berhasil Disimpan',
+                        'url' => route('penganggaran.detail', $data->id)
+                    ]);
+                }
             }
         }
     }

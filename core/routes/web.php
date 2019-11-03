@@ -1,7 +1,8 @@
 <?php
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Session;
 Route::get('/coba', function () {
-
+    Session::forget('step1');
 });
 
 Route::get('/', 'Auth\LoginController@showLoginForm');
@@ -16,6 +17,7 @@ Route::group(['prefix' => '/jalan'], function () {
     Route::match(['get', 'post'], 'tambah', 'JalanController@tambah')->name('jalan.tambah');
     Route::get('/detail/{id}','JalanController@detail')->name('jalan.detail');
     Route::post('/simpan','JalanController@simpan')->name('jalan.simpan');
+    Route::post('/penganggaran','JalanController@penganggaran')->name('jalan.penganggaran');
     Route::get('/edit/{id}','JalanController@edit')->name('jalan.edit');
     Route::post('/update','JalanController@update')->name('jalan.update');
     Route::get('/hapus/{id}','JalanController@hapus')->name('jalan.hapus');
@@ -39,6 +41,7 @@ Route::group(['prefix' => '/tpt'], function () {
     Route::get('/edit/{id}','TPTController@edit')->name('tpt.edit');
     Route::post('/update','TPTController@update')->name('tpt.update');
     Route::get('/hapus/{id}','TPTController@hapus')->name('tpt.hapus');
+    Route::post('/penganggaran','TPTController@penganggaran')->name('tpt.penganggaran');
 });
 
 Route::group(['prefix' => '/drainase'], function () {
@@ -46,6 +49,7 @@ Route::group(['prefix' => '/drainase'], function () {
     Route::get('/tambah/{id}','DrainaseController@tambah')->name('drainase.tambah');
     Route::get('/detail/{id}','DrainaseController@detail')->name('drainase.detail');
     Route::post('/simpan','DrainaseController@simpan')->name('drainase.simpan');
+    Route::post('/pemeliharaan','DrainaseController@pemeliharaan')->name('drainase.pemeliharaan');
     Route::get('/edit/{id}','DrainaseController@edit')->name('drainase.edit');
     Route::post('/update','DrainaseController@update')->name('drainase.update');
     Route::get('/hapus/{id}','DrainaseController@hapus')->name('drainase.hapus');
@@ -59,6 +63,7 @@ Route::group(['prefix' => '/beton'], function () {
     Route::get('/edit/{id}','BetonController@edit')->name('beton.edit');
     Route::post('/update','BetonController@update')->name('beton.update');
     Route::get('/hapus/{id}','BetonController@hapus')->name('beton.hapus');
+    Route::post('/penganggaran','BetonController@penganggaran')->name('beton.penganggaran');
 });
 
 Route::group(['prefix' => '/jembatan'], function () {
@@ -66,6 +71,7 @@ Route::group(['prefix' => '/jembatan'], function () {
     Route::get('/tambah/{id}','JembatanController@tambah')->name('jembatan.tambah');
     Route::get('/detail/{id}','JembatanController@detail')->name('jembatan.detail');
     Route::post('/simpan','JembatanController@simpan')->name('jembatan.simpan');
+    Route::post('/penganggaran','JembatanController@penganggaran')->name('jembatan.penganggaran');
     Route::get('/edit/{id}','JembatanController@edit')->name('jembatan.edit');
     Route::post('/update','JembatanController@update')->name('jembatan.update');
     Route::get('/hapus/{id}','JembatanController@hapus')->name('jembatan.hapus');
@@ -84,6 +90,8 @@ Route::group(['prefix' => '/penganggaran'], function () {
     Route::get('/edit/{id}','PenganggaranController@edit')->name('penganggaran.edit');
     Route::post('/update','PenganggaranController@update')->name('penganggaran.update');
     Route::get('/hapus/{id}','PenganggaranController@hapus')->name('penganggaran.hapus');
+    Route::post('/json/{id}','PenganggaranController@json')->name('penganggaran.json');
+
 });
 
 Route::group(['prefix' => '/njop'], function () {

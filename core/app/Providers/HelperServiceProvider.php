@@ -15,9 +15,11 @@ class HelperServiceProvider extends ServiceProvider
     {
         require_once app_path() . '/Helpers/GeneralHelp.php';
         require_once app_path() . '/Helpers/MapJembatan.php';
+        require_once app_path() . '/Helpers/MapDrainase.php';
         // require_once app_path() . '/Helpers/MapJalan.php';
-        // require_once app_path() . '/Helpers/MapTPT.php';
-        // require_once app_path() . '/Helpers/MapDrainase.php';
+        require_once app_path() . '/Helpers/MapTPT.php';
+        require_once app_path() . '/Helpers/MapBeton.php';
+        require_once app_path() . '/Helpers/PenganggaranHelp.php';
     }
 
     /**
