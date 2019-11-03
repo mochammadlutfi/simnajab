@@ -7,7 +7,7 @@
                         <th>No</th>
                         <th>Panjang Flat Beton</th>
                         <th>Kondisi Flat Beton</th>
-                        <th>Terakhir Diperbaharui</th>
+                        <th>Penganggaran Terakhir</th>
                         <th></th>
                     </tr>
                 </thead>

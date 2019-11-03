@@ -46,8 +46,17 @@ class JembatanController extends Controller
                 ->addColumn('kondisi', function($row){
                     return ucwords($row->kondisi);
                 })
+                ->addColumn('pembangunan', function($row){
+                    return GeneralHelp::tgl_indo($row->penganggaran->tgl);
+                })
                 ->addColumn('tgl', function($row){
-                   return GeneralHelp::tgl_indo($row->penganggaran->tgl);
+                    $ang_jbt = AngJembatan::where('jembatan_id', $row->jembatan_id)->orderBy('created_at', 'desc')->first();
+                    if($ang_jbt === null)
+                    {
+                        return GeneralHelp::tgl_indo($row->penganggaran->tgl);
+                    }else{
+                        return GeneralHelp::tgl_indo($ang_jbt->penganggaran->tgl);
+                    }
                 })
                 ->addColumn('action', function($row){
                     $btn = '<center><div class="btn-group" role="group">
@@ -64,7 +73,7 @@ class JembatanController extends Controller
 
                     return $btn;
                 })
-            ->rawColumns(['nama', 'beton', 'batu', 'action', 'tgl', 'posisi'])
+            ->rawColumns(['nama', 'beton', 'batu', 'action', 'tgl', 'posisi', 'pembangunan'])
             ->make(true);
         }
         // return view('jembatan', compact('jalan'));

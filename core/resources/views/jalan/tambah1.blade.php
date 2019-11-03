@@ -75,9 +75,9 @@
                                                     Rp.
                                                 </span>
                                             </div>
-                                        <input type="number" class="form-control" id="field-jml_anggaran" name="jml_anggaran" placeholder="Masukan Nilai NJOP">
+                                        <input type="number" class="form-control" id="field-njop" name="njop" placeholder="Masukan Nilai NJOP">
                                     </div>
-                                    <div id="error-jml_anggaran" class="invalid-feedback"></div>
+                                    <div id="error-njop" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Keterangan Tambahan</label>
@@ -212,7 +212,7 @@ function show_marker(kordinat, koor1, koor2)
         marker_0.setPosition(kordinat);
         longlat1.value = koor1  + ', ' + koor2;
     }
-    alert(cek_marker);
+    // alert(cek_marker);
 }
 function computeTotalDistance(result) {
     var total = 0;

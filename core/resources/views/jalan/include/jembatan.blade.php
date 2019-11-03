@@ -19,7 +19,8 @@
                         <th>Nama</th>
                         <th>Panjang</th>
                         <th>Kondisi</th>
-                        <th>Tgl Pembangunan</th>
+                        <th>Pembangunan</th>
+                        <th>Penganggaran Terakhir</th>
                         <th></th>
                     </tr>
                 </thead>

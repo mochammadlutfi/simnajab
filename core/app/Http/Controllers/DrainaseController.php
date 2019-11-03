@@ -12,6 +12,7 @@ use App\Models\AngDrainase;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use FarhanWazir\GoogleMaps\GMaps;
+use App\Helpers\GeneralHelp;
 class DrainaseController extends Controller
 {
     /**
@@ -62,7 +63,13 @@ class DrainaseController extends Controller
                     return ucwords($row->posisi);
                 })
                 ->addColumn('tgl', function($row){
-                    return date('d-m-y', strtotime($row->updated_at));
+                    $anggaran = AngDrainase::where('drainase_id', $row->drainase_id)->orderBy('created_at', 'desc')->first();
+                    if($anggaran === null)
+                    {
+                        return GeneralHelp::tgl_indo($row->penganggaran->tgl);
+                    }else{
+                        return GeneralHelp::tgl_indo($anggaran->penganggaran->tgl);
+                    }
                 })
                 ->addColumn('action', function($row){
 

@@ -50,14 +50,13 @@ class JalanController extends Controller
                     return $ang->count(). ' Penganggaran';
                 })
                 ->addColumn('ang_last', function($row){
-                    $ang = Penganggaran::where('rute_id', $row->jalan_id)->first();
+                    $ang = Penganggaran::where('rute_id', $row->jalan_id)->orderBy('created_at', 'desc')->first();
                     if($ang === null)
                     {
                         return 'Tidak Ada';
                     }else{
                         return GeneralHelp::tgl_indo($ang->tgl);
                     }
-                    return 'Tidak Ada';
                 })
                 ->addColumn('action', function($row){
 
@@ -179,6 +178,8 @@ class JalanController extends Controller
                 $data->lat_akhir = $request->lat_akhir;
                 $data->lng_akhir = $request->long_akhir;
                 $data->polyline = $request->polypath;
+                $data->njop = $request->njop;
+                $data->keterangan = $request->keterangan;
                 if($data->save())
                 {
                     return response()->json([
@@ -201,8 +202,8 @@ class JalanController extends Controller
         $penganggaran_last = Penganggaran::where('rute_id', $jalan->jalan_id)->orderBy('created_at', 'desc')->first();
         $anggaran = AngJalan::where('jalan_id', $jalan->jalan_id)->latest()->get();
         $config['center'] = $jalan->lat_akhir.', '.$jalan->lng_akhir;
-        $config['zoom'] = '13';
-        $config['map_height'] = '630px';
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '450px';
         $config['map_type'] = 'SATELLITE';
         $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
         $config['places'] = TRUE;
@@ -318,6 +319,8 @@ class JalanController extends Controller
             $data->lat_akhir = $request->lat_akhir;
             $data->lng_akhir = $request->long_akhir;
             $data->polyline = $request->polypath;
+            $data->njop = $request->njop;
+            $data->keterangan = $request->keterangan;
             if($data->save())
             {
                 return response()->json([

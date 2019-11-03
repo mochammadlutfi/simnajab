@@ -49,17 +49,11 @@
                         Statistik Penganggaran <small>Tahun Ini</small>
                     </h3>
                     <div class="block-options">
-                        <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
-                            <i class="si si-refresh"></i>
-                        </button>
-                        <button type="button" class="btn-block-option">
-                            <i class="si si-wrench"></i>
-                        </button>
                     </div>
                 </div>
                 <div class="block-content block-content-full">
                     <div class="pull-all">
-                        <canvas class="js-chartjs-dashboard-lines"></canvas>
+                            {!! $chart->container() !!}
                     </div>
                 </div>
             </div>
@@ -67,4 +61,7 @@
         <!-- END Row #2 -->
     </div>
 </div>
-@endsection
+@stop
+@push('scripts')
+{!! $chart->script() !!}
+@endpush

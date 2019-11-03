@@ -21,7 +21,7 @@
                         <th>Beton</th>
                         <th>Kondisi</th>
                         <th>Posisi</th>
-                        <th>Diperbaharui</th>
+                        <th>Penganggaran Terakhir</th>
                         <th></th>
                     </tr>
                 </thead>

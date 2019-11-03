@@ -29,9 +29,9 @@
                 <a class="nav-link" href="#penganggaran_jalan"><i class="si si-briefcase mr-5"></i>Penganggaran</a>
             </li>
         </ul>
-        <div class="block-content tab-content">
+        <div class="block-content tab-content pb-15">
             <div class="tab-pane active" id="detail_jalan" role="tabpanel">
-                <div class="row py-10 px-0">
+                {{-- <div class="row py-10 px-0">
                     <div class="col-6 col-md-4">
                         <p>
                             <i class="si si-graph text-muted mr-5"></i> <strong>Panjang Jalan </strong> {{ $jalan->panjang }} <small>Meter</small>
@@ -69,20 +69,88 @@
                     </div>
                     <div class="col-6 col-md-4">
                         <p>
-                            <i class="si si-drop text-muted mr-5"></i> <strong>NJOP Rp. 21 / meter</strong>
+                            <i class="si si-drop text-muted mr-5"></i> <strong>NJOP Rp. {{ number_format($jalan->njop,0,",",".") }} / meter</strong>
                         </p>
                     </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-briefcase text-muted mr-5"></i> <strong>Penganggaran Terakhir <small> {{ $penganggaran_last->tgl }} </small></strong>
-                        </p>
-                    </div>
-                </div>
+                </div> --}}
                 <div class="row">
                     <div class="col-lg-12">
                         {!! $map['html'] !!}
                     </div>
-                    <div class="col-lg-4"></div>
+                </div>
+                <div class="row mt-15">
+                    <div class="col-lg-6">
+                        <table class="table font-weight-bold">
+                            <tbody>
+                                <tr>
+                                    <td width="40%">Nama Jalan</td>
+                                    <td><span class="mr-5">:</span>{{ $jalan->nama }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Panjang Jalan</td>
+                                    <td><span class="mr-5">:</span>{{ $jalan->panjang }} Meter</td>
+                                </tr>
+                                <tr>
+                                    <td>Lebar Jalan</td>
+                                    <td><span class="mr-5">:</span>{{ $jalan->lebar }} Meter</td>
+                                </tr>
+                                <tr>
+                                    <td>Nilai NJOP Jalan</td>
+                                    <td><span class="mr-5">:</span>Rp. {{ number_format($jalan->njop,0,",",".") }} / Meter</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e4e7ed;">
+                                    <td>Jumlah Jembatan</td>
+                                    <td><span class="mr-5">:</span>{{ $jembatan->count() }} Jembatan</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-6">
+                        <table class="table font-weight-bold">
+                            <tbody>
+                                <tr>
+                                    <td width="40%">Jumlah Flat Beton</td>
+                                    <td><span class="mr-5">:</span>{{ $beton->count() }} Flat Beton</td>
+                                </tr>
+                                <tr>
+                                    <td>Jumlah Drainase</td>
+                                    <td><span class="mr-5">:</span>{{ $drainase->count() }} Drainase</td>
+                                </tr>
+                                <tr>
+                                    <td>Jumlah TPT</td>
+                                    <td><span class="mr-5">:</span>{{ $tpt->count() }} TPT</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e4e7ed;">
+                                    <td>Jumlah Penganggaran</td>
+                                    <td><span class="mr-5">:</span>{{ $penganggaran->count() }} Penganggaran</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e4e7ed;">
+                                    <td>Terakhir Penganggaran</td>
+                                    <td><span class="mr-5">:</span>
+                                    @if($penganggaran->count() <= 0)
+                                        Tidak Ada
+                                    @else
+                                        {{ GeneralHelp::tgl_indo($penganggaran_last->tgl) }}
+                                    @endif
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td width="40%" class="font-weight-bold">Keterangan :</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ $jalan->keterangan }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             {{-- Data TPT Jalan --}}
@@ -241,6 +309,10 @@ $(function () {
             {
                 data: 'kondisi',
                 name: 'kondisi'
+            },
+            {
+                data: 'pembangunan',
+                name: 'pembangunan'
             },
             {
                 data: 'tgl',
