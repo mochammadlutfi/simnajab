@@ -101,6 +101,19 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-lg-3 col-form-label">Sumber Anggaran</label>
+                            <div class="col-lg-9">
+                                <select class="form-control" name="sumber" id="field-sumber">
+                                    <option value="">Pilih</option>
+                                    <option value="APBD Kabupaten">APBD Kabupaten</option>
+                                    <option value="APBD Provinsi">APBD Provinsi</option>
+                                    <option value="DAK">DAK (Dana Alokasi Khusus)</option>
+                                    <option value="CSR">CSR (Corporate Sosial Responsibility)</option>
+                                </select>
+                                <div id="error-sumber" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-lg-3 col-form-label">Tanggal Penganggaran</label>
                             <div class="col-lg-9">
                                 <input type="text" class="form-control" id="field-tgl" name="tgl" placeholder="Masukan Tanggal Penganggaran" autocomplete="off">
@@ -133,7 +146,7 @@ jQuery(document).ready(function () {
     $("#input-ficons-5").fileinput();
     $('#field-tgl').datepicker({
         format: 'dd-mm-yyyy',
-        startDate: 'today'
+        todayHighlight: true,
     });
 
     $('#jenis-penganggaran').change(function(){

@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use FarhanWazir\GoogleMaps\GMaps;
+use App\Helpers\GeneralHelp;
 class TPTController extends Controller
 {
     /**
@@ -62,7 +63,13 @@ class TPTController extends Controller
                     return ucwords($row->posisi);
                 })
                 ->addColumn('tgl', function($row){
-                    return date('d-m-y', strtotime($row->updated_at));
+                    $anggaran = AngTPT::where('tpt_id', $row->tpt_id)->orderBy('created_at', 'desc')->first();
+                    if($anggaran == null)
+                    {
+                        return GeneralHelp::tgl_indo($row->penganggaran->tgl);
+                    }else{
+                        return GeneralHelp::tgl_indo($anggaran->penganggaran->tgl);
+                    }
                 })
                 ->addColumn('action', function($row){
 
@@ -251,7 +258,7 @@ class TPTController extends Controller
             $data->nomor_bast =  $step1['nomor_bast'];
             $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
             $data->jml_anggaran = $step1['jml_anggaran'];
-            // $data->jml_anggaran = 123123;
+            $data->sumber = $step1['sumber'];
             if($data->save())
             {
                 if($request->hasfile('files'))
@@ -259,13 +266,12 @@ class TPTController extends Controller
                     foreach($request->file('files') as $f)
                     {
 
-                        $ext = $f->getClientOriginalExtension();
-                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
-                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
-
+                        $name= $f->getClientOriginalName();
+                        $f->move(public_path().'/uploads/dokumen/'.$data->id.'', $name);
                         $file = array(
                             'penganggaran_id' => $data->id,
-                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                            'nama' => $name,
+                            'path' => '/uploads/dokumen/'.$data->id.'/'.$name,
                         );
                         Dokumen::insert($file);
                     }
@@ -291,6 +297,7 @@ class TPTController extends Controller
                     $request->session()->forget('penganggaran');
                     return response()->json([
                         'fail' => false,
+                        'url' => route('penganggaran.detail', $data->id)
                     ]);
                 }
             }
@@ -330,6 +337,7 @@ class TPTController extends Controller
             $data->nomor_bast =  $step1['nomor_bast'];
             $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
             $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->sumber = $step1['sumber'];
             $data->keterangan = $request->keterangan;
             if($data->save())
             {
@@ -338,13 +346,12 @@ class TPTController extends Controller
                     foreach($request->file('files') as $f)
                     {
 
-                        $ext = $f->getClientOriginalExtension();
-                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
-                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
-
+                        $name= $f->getClientOriginalName();
+                        $f->move(public_path().'/uploads/dokumen/'.$data->id.'', $name);
                         $file = array(
                             'penganggaran_id' => $data->id,
-                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                            'nama' => $name,
+                            'path' => '/uploads/dokumen/'.$data->id.'/'.$name,
                         );
                         Dokumen::insert($file);
                     }

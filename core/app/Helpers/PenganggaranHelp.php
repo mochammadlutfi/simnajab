@@ -21,8 +21,8 @@ class PenganggaranHelp
         $penganggaran = Penganggaran::find($penganggaran_id);
         $jalan = Jalan::find($penganggaran->rute_id);
         $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
-        $config['zoom'] = '13';
-        $config['map_height'] = '630px';
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '450px';
         $config['map_type'] = 'SATELLITE';
         $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
         $config['places'] = TRUE;
@@ -68,8 +68,8 @@ class PenganggaranHelp
         $penganggaran = Penganggaran::find($penganggaran_id);
         $jalan = Jalan::find($penganggaran->rute_id);
         $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
-        $config['zoom'] = '13';
-        $config['map_height'] = '630px';
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '450px';
         $config['map_type'] = 'SATELLITE';
         $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
         $config['places'] = TRUE;
@@ -121,8 +121,8 @@ class PenganggaranHelp
         $penganggaran = Penganggaran::find($penganggaran_id);
         $jalan = Jalan::find($penganggaran->rute_id);
         $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
-        $config['zoom'] = '13';
-        $config['map_height'] = '630px';
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '450px';
         $config['map_type'] = 'SATELLITE';
         $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
         $config['places'] = TRUE;
@@ -169,8 +169,8 @@ class PenganggaranHelp
         $penganggaran = Penganggaran::find($penganggaran_id);
         $jalan = Jalan::find($penganggaran->rute_id);
         $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
-        $config['zoom'] = '13';
-        $config['map_height'] = '630px';
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '450px';
         $config['map_type'] = 'SATELLITE';
         $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
         $config['places'] = TRUE;
@@ -219,8 +219,8 @@ class PenganggaranHelp
         $penganggaran = Penganggaran::find($penganggaran_id);
         $jalan = Jalan::find($penganggaran->rute_id);
         $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
-        $config['zoom'] = '13';
-        $config['map_height'] = '630px';
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '450px';
         $config['map_type'] = 'SATELLITE';
         $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
         $config['places'] = TRUE;

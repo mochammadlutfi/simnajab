@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use FarhanWazir\GoogleMaps\GMaps;
+use Storage;
 class JembatanController extends Controller
 {
     /**
@@ -166,7 +167,6 @@ class JembatanController extends Controller
                 'errors' => $validator->errors()
             ]);
         }else{
-
             $step1 = $request->session()->get('penganggaran');
             $data = new Penganggaran();
             $data->rute_id = $step1['jalan_id'];
@@ -176,26 +176,39 @@ class JembatanController extends Controller
             $data->nomor_bast =  $step1['nomor_bast'];
             $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
             $data->jml_anggaran = $step1['jml_anggaran'];
-            // $data->jml_anggaran = 123123;
+            $data->sumber =$step1['sumber'];
             if($data->save())
             {
-                if($step1['jenis'] = 'jembatan')
+                if($request->hasfile('files'))
                 {
-                    $jembatan = new Jembatan();
-                    $jembatan->jalan_id = $request->jalan_id;
-                    $jembatan->penganggaran_id = $data->id;
-                    $jembatan->nama = $request->nama;
-                    $jembatan->lat = $request->lat_awal;
-                    $jembatan->lng = $request->long_awal;
-                    $jembatan->panjang = $request->panjang;
-                    $jembatan->kondisi = $request->kondisi;
-                    if($jembatan->save())
+                    foreach($request->file('files') as $f)
                     {
-                        $request->session()->forget('penganggaran');
-                        return response()->json([
-                            'fail' => false,
-                        ]);
+                        $name= $f->getClientOriginalName();
+                        $f->move(public_path().'/uploads/dokumen/'.$data->id.'', $name);
+                        $file = array(
+                            'penganggaran_id' => $data->id,
+                            'nama' => $name,
+                            'path' => '/uploads/dokumen/'.$data->id.'/'.$name,
+                        );
+                        Dokumen::insert($file);
                     }
+                }
+
+                $jembatan = new Jembatan();
+                $jembatan->jalan_id = $request->jalan_id;
+                $jembatan->penganggaran_id = $data->id;
+                $jembatan->nama = $request->nama;
+                $jembatan->lat = $request->lat_awal;
+                $jembatan->lng = $request->long_awal;
+                $jembatan->panjang = $request->panjang;
+                $jembatan->kondisi = $request->kondisi;
+                if($jembatan->save())
+                {
+                    $request->session()->forget('penganggaran');
+                    return response()->json([
+                        'fail' => false,
+                        'url' => route('penganggaran.detail', $data->id)
+                    ]);
                 }
             }
         }
@@ -228,6 +241,7 @@ class JembatanController extends Controller
             $data->nomor_bast =  $step1['nomor_bast'];
             $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
             $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->sumber = $step1['sumber'];
             $data->keterangan = $request->keterangan;
             if($data->save())
             {
@@ -236,13 +250,12 @@ class JembatanController extends Controller
                     foreach($request->file('files') as $f)
                     {
 
-                        $ext = $f->getClientOriginalExtension();
-                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
-                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
-
+                        $name= $f->getClientOriginalName();
+                        $f->move(public_path().'/uploads/dokumen/'.$data->id.'', $name);
                         $file = array(
                             'penganggaran_id' => $data->id,
-                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                            'nama' => $name,
+                            'path' => '/uploads/dokumen/'.$data->id.'/'.$name,
                         );
                         Dokumen::insert($file);
                     }

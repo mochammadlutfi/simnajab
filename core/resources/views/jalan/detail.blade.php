@@ -31,48 +31,6 @@
         </ul>
         <div class="block-content tab-content pb-15">
             <div class="tab-pane active" id="detail_jalan" role="tabpanel">
-                {{-- <div class="row py-10 px-0">
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-graph text-muted mr-5"></i> <strong>Panjang Jalan </strong> {{ $jalan->panjang }} <small>Meter</small>
-                        </p>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="fa fa-fw fa-arrows-alt text-muted mr-5"></i> <strong>Lebar Jalan</strong> {{ $jalan->lebar }} <small>Meter</small>
-                        </p>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-anchor text-muted mr-5"></i> <strong> {{ $jembatan->count() }} Jembatan</strong>
-                        </p>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-layers text-muted mr-5"></i> <strong>{{ $beton->count() }} Flat Beton</strong>
-                        </p>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-drop text-muted mr-5"></i> <strong>{{ $drainase->count() }} Drainase</strong>
-                        </p>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-briefcase text-muted mr-5"></i> <strong>{{ $penganggaran->count() }} Penganggaran</strong>
-                        </p>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-drawer text-muted mr-5"></i> <strong>{{ $tpt->count() }} TPT</strong>
-                        </p>
-                    </div>
-                    <div class="col-6 col-md-4">
-                        <p>
-                            <i class="si si-drop text-muted mr-5"></i> <strong>NJOP Rp. {{ number_format($jalan->njop,0,",",".") }} / meter</strong>
-                        </p>
-                    </div>
-                </div> --}}
                 <div class="row">
                     <div class="col-lg-12">
                         {!! $map['html'] !!}
@@ -122,10 +80,10 @@
                                 </tr>
                                 <tr style="border-bottom: 1px solid #e4e7ed;">
                                     <td>Jumlah Penganggaran</td>
-                                    <td><span class="mr-5">:</span>{{ $penganggaran->count() }} Penganggaran</td>
+                                    <td><span class="mr-5">:</span>Rp {{ number_format($penganggaran->sum('jml_anggaran'),0,",",".") }}</td>
                                 </tr>
                                 <tr style="border-bottom: 1px solid #e4e7ed;">
-                                    <td>Terakhir Penganggaran</td>
+                                    <td>Penganggaran Terakhir</td>
                                     <td><span class="mr-5">:</span>
                                     @if($penganggaran->count() <= 0)
                                         Tidak Ada

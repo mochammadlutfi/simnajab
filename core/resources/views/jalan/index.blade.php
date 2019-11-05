@@ -169,6 +169,8 @@ function edit(id){
 }
 
 function hapus(id) {
+    var url = '{{ route("jalan.hapus", ":id") }}';
+    url = url.replace(':id', id);
     swal({
         title: "Anda Yakin?",
         text: "Data Yang Dihapus Tidak Akan Bisa Dikembalikan",
@@ -180,7 +182,7 @@ function hapus(id) {
     .then((willDelete) => {
         if (willDelete) {
         $.ajax({
-            url: laroute.route('jalan.hapus', { id: id }),
+            url: url,
             type: "get",
             dataType: "JSON",
             success: function(data) {

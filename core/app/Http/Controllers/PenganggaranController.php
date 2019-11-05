@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Jalan;
 use App\Models\Jembatan;
 use App\Models\Penganggaran;
+use App\Models\Dokumen;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Beton;
@@ -18,6 +19,7 @@ use App\Helpers\MapJembatan;
 use App\Helpers\MapTPT;
 use App\Helpers\MapBeton;
 use App\Helpers\PenganggaranHelp;
+use App\Helpers\GeneralHelp;
 class PenganggaranController extends Controller
 {
     /**
@@ -57,10 +59,16 @@ class PenganggaranController extends Controller
                 ->addColumn('tujuan', function($row){
                     return ucwords($row->tujuan);
                 })
+                ->addColumn('sumber', function($row){
+                    return ucwords($row->sumber);
+                })
+                ->addColumn('tanggal', function($row){
+                    return GeneralHelp::tgl_indo($row->tgl);
+                })
                 ->addColumn('anggaran', function($row){
                     return 'Rp.'. number_format($row->jml_anggaran,0,",",".");
                 })
-                ->rawColumns(['jenis', 'action', 'jabatan', 'tgl'])
+                ->rawColumns(['jenis', 'action', 'jabatan', 'tgl', 'sumber'])
                 ->make(true);
         }
         return view('penganggaran.index', compact('jalan'));
@@ -223,7 +231,7 @@ class PenganggaranController extends Controller
                 }
             }else if($step2['jenis'] == 'TPT')
             {
-                if($step2['tujuan'] == 'Pembagunan')
+                if($step2['tujuan'] == 'Pembangunan')
                 {
                     $map = MapTPT::pembangunan($jalan->jalan_id);
                     return view('penganggaran.tpt.pembangunan', compact('jalan', 'map', 'step2'));
@@ -250,31 +258,32 @@ class PenganggaranController extends Controller
     public function detail($id)
     {
         $penganggaran = Penganggaran::find($id);
+        $dokumen = Dokumen::where('penganggaran_id', $penganggaran->id)->OrderBy('created_at', 'DESC')->get();
         $jalan = Jalan::find($penganggaran->rute_id);
         if($penganggaran->jenis == 'jalan')
         {
             $map = PenganggaranHelp::jalan($penganggaran->id);
-            return view('penganggaran.jalan.detail', compact('jalan', 'map', 'penganggaran'));
+            return view('penganggaran.jalan.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
 
         }else if($penganggaran->jenis == 'drainase')
         {
             $map = PenganggaranHelp::drainase($penganggaran->id);
-            return view('penganggaran.drainase.detail_pembangunan', compact('jalan', 'map', 'penganggaran'));
+            return view('penganggaran.drainase.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
 
         }else if($penganggaran->jenis == 'jembatan')
         {
             $map = PenganggaranHelp::jembatan($penganggaran->id);
-            return view('penganggaran.jembatan.detail', compact('jalan', 'map', 'penganggaran'));
+            return view('penganggaran.jembatan.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
 
         }else if($penganggaran->jenis == 'tpt')
         {
             $map = PenganggaranHelp::tpt($penganggaran->id);
-            return view('penganggaran.tpt.detail', compact('jalan', 'map', 'penganggaran'));
+            return view('penganggaran.tpt.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
 
         }else if($penganggaran->jenis == 'beton')
         {
             $map = PenganggaranHelp::beton($penganggaran->id);
-            return view('penganggaran.beton.detail', compact('jalan', 'map', 'penganggaran'));
+            return view('penganggaran.beton.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
         }
     }
 

@@ -118,7 +118,7 @@ jQuery(document).ready(function () {
         var formData = new FormData($('#form-drainase')[0]);
 
         $.ajax({
-            url: "{{ route('drainase.pemeliharaan') }}",
+            url: "{{ route('drainase.penganggaran') }}",
             type: 'post',
             data: formData,
             cache: false,

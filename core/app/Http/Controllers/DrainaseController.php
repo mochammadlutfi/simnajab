@@ -64,7 +64,7 @@ class DrainaseController extends Controller
                 })
                 ->addColumn('tgl', function($row){
                     $anggaran = AngDrainase::where('drainase_id', $row->drainase_id)->orderBy('created_at', 'desc')->first();
-                    if($anggaran === null)
+                    if($anggaran == null)
                     {
                         return GeneralHelp::tgl_indo($row->penganggaran->tgl);
                     }else{
@@ -211,6 +211,7 @@ class DrainaseController extends Controller
             $data->nomor_bast =  $step1['nomor_bast'];
             $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
             $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->sumber = $step1['sumber'];
             $data->keterangan = $request->keterangan;
             if($data->save())
             {
@@ -219,13 +220,12 @@ class DrainaseController extends Controller
                     foreach($request->file('files') as $f)
                     {
 
-                        $ext = $f->getClientOriginalExtension();
-                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
-                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
-
+                        $name= $f->getClientOriginalName();
+                        $f->move(public_path().'/uploads/dokumen/'.$data->id.'', $name);
                         $file = array(
                             'penganggaran_id' => $data->id,
-                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                            'nama' => $name,
+                            'path' => '/uploads/dokumen/'.$data->id.'/'.$name,
                         );
                         Dokumen::insert($file);
                     }
@@ -251,13 +251,14 @@ class DrainaseController extends Controller
                     $request->session()->forget('penganggaran');
                     return response()->json([
                         'fail' => false,
+                        'url' => route('penganggaran.detail', $data->id)
                     ]);
                 }
             }
         }
     }
 
-    public function pemeliharaan(Request $request)
+    public function penganggaran(Request $request)
     {
 
         $rules = [
@@ -286,6 +287,7 @@ class DrainaseController extends Controller
             $data->nomor_bast =  $step1['nomor_bast'];
             $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
             $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->sumber = $step1['sumber'];
             $data->keterangan = $request->keterangan;
             if($data->save())
             {
@@ -294,13 +296,12 @@ class DrainaseController extends Controller
                     foreach($request->file('files') as $f)
                     {
 
-                        $ext = $f->getClientOriginalExtension();
-                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
-                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
-
+                        $name= $f->getClientOriginalName();
+                        $f->move(public_path().'/uploads/dokumen/'.$data->id.'', $name);
                         $file = array(
                             'penganggaran_id' => $data->id,
-                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                            'nama' => $name,
+                            'path' => '/uploads/dokumen/'.$data->id.'/'.$name,
                         );
                         Dokumen::insert($file);
                     }

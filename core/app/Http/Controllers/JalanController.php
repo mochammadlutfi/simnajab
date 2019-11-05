@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use FarhanWazir\GoogleMaps\GMaps;
+use Illuminate\Support\Facades\Storage;
 class JalanController extends Controller
 {
     /**
@@ -199,6 +200,7 @@ class JalanController extends Controller
         $drainase = Drainase::where('jalan_id', $jalan->jalan_id)->latest()->get();
         $beton = Beton::where('jalan_id', $jalan->jalan_id)->latest()->get();
         $penganggaran = Penganggaran::where('rute_id', $jalan->jalan_id)->latest()->get();
+        $jml_penganggaran = Penganggaran::where('rute_id', $jalan->jalan_id)->sum('jml_anggaran');
         $penganggaran_last = Penganggaran::where('rute_id', $jalan->jalan_id)->orderBy('created_at', 'desc')->first();
         $anggaran = AngJalan::where('jalan_id', $jalan->jalan_id)->latest()->get();
         $config['center'] = $jalan->lat_akhir.', '.$jalan->lng_akhir;
@@ -360,6 +362,7 @@ class JalanController extends Controller
             $data->nomor_bast =  $step1['nomor_bast'];
             $data->tgl = date('Y-m-d', strtotime($step1['tgl']));
             $data->jml_anggaran = $step1['jml_anggaran'];
+            $data->sumber = $step1['sumber'];
             if($data->save())
             {
                 if($request->hasfile('files'))
@@ -367,13 +370,12 @@ class JalanController extends Controller
                     foreach($request->file('files') as $f)
                     {
 
-                        $ext = $f->getClientOriginalExtension();
-                        $nama_file = md5($step1['nomor_bast']).'.'.$ext;
-                        $f->move(public_path().'/uploads/dokumen/'.$step1['nomor_bast'], $nama_file);
-
+                        $name= $f->getClientOriginalName();
+                        $f->move(public_path().'/uploads/dokumen/'.$data->id.'', $name);
                         $file = array(
                             'penganggaran_id' => $data->id,
-                            'path' => '/uploads/dokumen/'.$step1['nomor_bast'].'/'.$nama_file,
+                            'nama' => $name,
+                            'path' => '/uploads/dokumen/'.$data->id.'/'.$name,
                         );
                         Dokumen::insert($file);
                     }
@@ -391,6 +393,12 @@ class JalanController extends Controller
                 $ang_jalan->polypath = $request->polypath;
                 if($ang_jalan->save())
                 {
+                    $request->session()->forget('penganggaran');
+                    return response()->json([
+                        'fail' => false,
+                        'text' => $data->tujuan.' Jalan Berhasil Disimpan',
+                        'url' => route('penganggaran.detail', $data->id)
+                    ]);
                 }
             }
         }
@@ -455,6 +463,11 @@ class JalanController extends Controller
 
     public function hapus($id)
     {
+        // $penganggaran = Penganggaran::where('rute_id', $id)->get();
+        // foreach($penganggaran as $p)
+        // {
+        //     Storage::disk('public')->deleteDirectory(public_path('uploads/dokumen/'.$p->id));
+        // }
         $data = Jalan::destroy($id);
         if($data){
             return response()->json([

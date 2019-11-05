@@ -49,7 +49,7 @@ Route::group(['prefix' => '/drainase'], function () {
     Route::get('/tambah/{id}','DrainaseController@tambah')->name('drainase.tambah');
     Route::get('/detail/{id}','DrainaseController@detail')->name('drainase.detail');
     Route::post('/simpan','DrainaseController@simpan')->name('drainase.simpan');
-    Route::post('/pemeliharaan','DrainaseController@pemeliharaan')->name('drainase.pemeliharaan');
+    Route::post('/penganggaran','DrainaseController@penganggaran')->name('drainase.penganggaran');
     Route::get('/edit/{id}','DrainaseController@edit')->name('drainase.edit');
     Route::post('/update','DrainaseController@update')->name('drainase.update');
     Route::get('/hapus/{id}','DrainaseController@hapus')->name('drainase.hapus');

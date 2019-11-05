@@ -12,7 +12,7 @@
             <h3 class="block-title">Kelola <small>Data Penganggaran</small></h3>
         </div>
         <div class="block-content">
-            <table class="table table-hover table-striped" id="list-jalan">
+            <table class="table table-hover table-striped" id="list-jalan" style="font-size:11px">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -21,6 +21,7 @@
                         <th>Tujuan</th>
                         <th>Perusahaan</th>
                         <th>No. BAST</th>
+                        <th>Sumber Anggaran</th>
                         <th>Anggaran</th>
                         <th>Tgl</th>
                     </tr>
@@ -64,12 +65,16 @@ $(function () {
                 name: 'nomor_bast'
             },
             {
+                data: 'sumber',
+                name: 'sumber'
+            },
+            {
                 data: 'anggaran',
                 name: 'anggaran'
             },
             {
-                data: 'tgl',
-                name: 'tgl'
+                data: 'tanggal',
+                name: 'tanggal'
             },
         ]
     });

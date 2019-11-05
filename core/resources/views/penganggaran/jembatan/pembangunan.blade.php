@@ -20,6 +20,7 @@
                         <input type="hidden" name="jalan_id" value="{{ $jalan->jalan_id }}">
                         <input type="hidden" name="lat_awal" id="lat_awal" value="">
                         <input type="hidden" name="long_awal" id="long_awal" value="">
+                        <input type="hidden" name="longlat1" id="field-longlat1" value="">
                         @csrf
                         <div class="row">
                             <div class="col-lg-12">
@@ -52,8 +53,14 @@
                                     <div id="error-kondisi" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Koordinat Jembatan</label>
-                                    <input type="text" class="form-control" name="longlat1" id="field-longlat1" readonly>
+                                    <label class="col-form-label">Keterangan Tambahan (Jika Ada)</label>
+                                    <textarea class="form-control" name="keterangan" placeholder="Masukan Keterangan Tambahan" rows="10"></textarea>
+                                    <div id="error-longlat2" class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Upload Dokumen</label>
+                                    <input id="field-dokumen" name="files[]" type="file" multiple>
+                                    {{-- <input id="" type="file" multiple> --}}
                                     <div id="error-longlat2" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -110,8 +117,8 @@ jQuery(document).ready(function () {
                         icon: 'success'
                     });
                     window.setTimeout(function () {
-                        location.reload();
-                    }, 1500);
+                        window.location = response.url;
+                    }, 100);
                 } else {
                     for (control in response.errors) {
                         $('#field-' + control).addClass('is-invalid');

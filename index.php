@@ -48,6 +48,9 @@ $app = require_once __DIR__.'/core/bootstrap/app.php';
 | and wonderful application we have prepared for them.
 |
 */
+$app->bind('path.public', function() {
+    return __DIR__;
+});
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
@@ -58,7 +61,3 @@ $response = $kernel->handle(
 $response->send();
 
 $kernel->terminate($request, $response);
-
-$app->bind('path.public', function() {
-    return __DIR__;
-});

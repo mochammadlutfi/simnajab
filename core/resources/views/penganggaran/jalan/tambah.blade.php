@@ -132,14 +132,14 @@ jQuery(document).ready(function () {
                     $('#modal_embed').modal('hide');
                     swal({
                         title: "Berhasil",
-                        text: "Data Drainase Berhasil Disimpan",
+                        text: response.text,
                         timer: 3000,
                         buttons: false,
                         icon: 'success'
                     });
                     window.setTimeout(function () {
-                        location.reload();
-                    }, 1500);
+                        window.location = response.url;
+                    }, 100);
                 } else {
                     for (control in response.errors) {
                         $('#field-' + control).addClass('is-invalid');

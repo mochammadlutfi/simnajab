@@ -21,4 +21,9 @@ class Drainase extends Model
     {
         return $this->belongsTo('App\Models\Jalan', 'jalan_id', 'jalan_id');
     }
+
+    public function penganggaran()
+    {
+        return $this->belongsTo('App\Models\Penganggaran', 'penganggaran_id', 'id');
+    }
 }

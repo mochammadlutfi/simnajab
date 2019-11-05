@@ -15,10 +15,16 @@
         </div>
         <div class="block-content pb-15">
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-12">
                     <div class="row">
-                        <label class="col-12">Informasi Penganggaran</label>
+                        <div class="col-lg-12">
+                            {!! $map['html'] !!}
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
                     <div class="row">
                         <label class="col-4">Rute Jalan</label>
                         <label class="col-8">: {{ $jalan->nama }}</label>
@@ -73,13 +79,6 @@
                                     <td></td>
                                 </tr>
                             </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-8">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            {!! $map['html'] !!}
                         </div>
                     </div>
                 </div>

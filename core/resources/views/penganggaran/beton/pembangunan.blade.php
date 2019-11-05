@@ -147,8 +147,8 @@ jQuery(document).ready(function () {
                         icon: 'success'
                     });
                     window.setTimeout(function () {
-                        location.reload();
-                    }, 1500);
+                        window.location = response.url;
+                    }, 100);
                 } else {
                     for (control in response.errors) {
                         $('#field-' + control).addClass('is-invalid');

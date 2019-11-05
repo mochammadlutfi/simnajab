@@ -15,73 +15,123 @@
         </div>
         <div class="block-content pb-15">
             <div class="row">
-                <div class="col-lg-4">
-                    <div class="row">
-                        <label class="col-12">Informasi Penganggaran</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Rute Jalan</label>
-                        <label class="col-8">: {{ $jalan->nama }}</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Jenis</label>
-                        <label class="col-8">: {{ ucwords($penganggaran->jenis) }}</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Tujuan</label>
-                        <label class="col-8">: {{ ucwords($penganggaran->tujuan) }}</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Perusahaan</label>
-                        <label class="col-8">: {{ $penganggaran->perusahaan }}</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">No. BAST</label>
-                        <label class="col-8">: {{ $penganggaran->nomor_bast }}</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Jumlah</label>
-                        <label class="col-8">: Rp. {{ number_format($penganggaran->jml_anggaran,0,",",".") }}</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Panjang</label>
-                        <label class="col-8">: {{ $penganggaran->AngJalan->panjang }} Meter</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Patok Awal</label>
-                        <label class="col-8">: {{ $penganggaran->AngJalan->patok_awal }} Meter</label>
-                    </div>
-                    <div class="row">
-                        <label class="col-4">Patok Akhir</label>
-                        <label class="col-8">: {{ $penganggaran->AngJalan->patok_akhir }} Meter</label>
-                    </div>
-                    @if($penganggaran->keterangan <> null)
-                        <div class="row">
-                            <label class="col-12">Keterangan : </label>
-                        </div>
-                        <div class="row">
-                            <label class="col-12">{{ $penganggaran->keterangan }}</label>
-                        </div>
-                    @endif
-                    <div class="row">
-                        <label class="col-12">Dokumen</label>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <table class="table">
-                                <tr>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-8">
+                <div class="col-lg-12">
                     <div class="row">
                         <div class="col-lg-12">
                             {!! $map['html'] !!}
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="row mt-15">
+                <div class="col-lg-6">
+                    <table class="table font-weight-bold">
+                        <tbody>
+                            <tr>
+                                <td width="40%">Ruas Jalan</td>
+                                <td><span class="mr-5">:</span>{{ $jalan->nama }}</td>
+                            </tr>
+                            <tr>
+                                <td>Jenis Penganggaran</td>
+                                <td><span class="mr-5">:</span>{{ ucwords($penganggaran->jenis) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tujuan Penganggaran</td>
+                                <td><span class="mr-5">:</span>{{ ucwords($penganggaran->tujuan) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Jumlah Anggaran</td>
+                                <td><span class="mr-5">:</span>Rp. {{ number_format($penganggaran->jml_anggaran,0,",",".") }}</td>
+                            </tr>
+                            <tr>
+                                <td>Sumber Dana</td>
+                                <td><span class="mr-5">:</span>{{ ucwords($penganggaran->sumber) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-6">
+                    <table class="table font-weight-bold">
+                        <tbody>
+                            <tr>
+                                <td width="40%">No. BAST</td>
+                                <td><span class="mr-5">:</span>{{ $penganggaran->nomor_bast }}</td>
+                            </tr>
+                            <tr>
+                                <td>Panjang {{ ucwords($penganggaran->tujuan) }}</td>
+                                <td><span class="mr-5">:</span>
+                                    {{ $penganggaran->AngJalan->panjang }} Meter
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Patok Awal {{ ucwords($penganggaran->tujuan) }}</td>
+                                <td><span class="mr-5">:</span>
+                                    {{ $penganggaran->AngJalan->patok_awal }} Meter
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e4e7ed;">
+                                <td>Patok Akhir {{ ucwords($penganggaran->tujuan) }}</td>
+                                <td><span class="mr-5">:</span>
+                                    {{ $penganggaran->AngJalan->patok_akhir }} Meter
+                                </td>
+                            </tr>
+                            <tr >
+                                <td>Tanggal Penganggaran</td>
+                                <td><span class="mr-5">:</span>
+                                    {{ GeneralHelp::tgl_indo($penganggaran->tgl) }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td width="40%" class="font-weight-bold">Keterangan :</td>
+                            </tr>
+                            @if($penganggaran->keterangan <> null || $penganggaran->keterangan <> '')
+                                <tr>
+                                    <td>{{ $penganggaran->keterangan }}</td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td>Tidak Ada Keterangan Tambahan</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th colspan="3" class="font-weight-bold">Dokumen</th>
+                            </tr>
+                            @if($dokumen->isEmpty())
+                            <tr>
+                                <td colspan="3" class="text-center">Dokumen Tidak Ditemukan</td>
+                            </tr>
+                            @else
+                                @php $i = 1; @endphp
+                                @foreach($dokumen as $d)
+                                    <tr>
+                                        <td>{{ $i++ }}</td>
+                                        <td>{{ $d->nama }}</td>
+                                        <td>
+                                            <a href="{{ url($d->path) }}" class="btn btn-sm btn-secondary" target="_blank" data-toggle="tooltip" title="Download">
+                                                <i class="fa fa-download"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
