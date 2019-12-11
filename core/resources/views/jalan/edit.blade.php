@@ -29,13 +29,13 @@
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label class="col-form-label">Nama Jalan</label>
-                                    <input type="text" class="form-control" name="nama" id="field-nama" placeholder="Masukan Nama Ruas Jalan">
+                                    <input type="text" class="form-control" name="nama" id="field-nama" placeholder="Masukan Nama Ruas Jalan" value="{{ $jalan->nama }}">
                                     <div id="error-nama" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Panjang</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="field-panjang" name="panjang" placeholder="Masukan Panjang Jalan">
+                                        <input type="number" class="form-control" id="field-panjang" name="panjang" placeholder="Masukan Panjang Jalan" value="{{ $jalan->panjang }}">
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 Meter
@@ -47,7 +47,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label">Lebar</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="field-lebar" name="lebar" placeholder="Masukan Lebar Jalan">
+                                        <input type="number" class="form-control" id="field-lebar" name="lebar" placeholder="Masukan Lebar Jalan" value="{{ $jalan->lebar }}">
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 Meter
@@ -60,10 +60,10 @@
                                     <label class="col-form-label">Kondisi Jalan</label>
                                     <select class="form-control" name="kondisi" id="field-kondisi">
                                         <option value="">Pilih</option>
-                                        <option value="baik">Baik</option>
-                                        <option value="sedang">Sedang</option>
-                                        <option value="rusak ringan">Rusak Ringan</option>
-                                        <option value="rusak parah">Rusak Parah</option>
+                                        <option value="baik" <?php if($jalan->kondisi == 'baik'){ echo 'selected="selected"'; } ?>>Baik</option>
+                                        <option value="sedang" <?php if($jalan->kondisi == 'sedang'){ echo 'selected="selected"'; } ?>>Sedang</option>
+                                        <option value="rusak ringan" <?php if($jalan->kondisi == 'rusak ringan'){ echo 'selected="selected"'; } ?>>Rusak Ringan</option>
+                                        <option value="rusak parah" <?php if($jalan->kondisi == 'rusak parah'){ echo 'selected="selected"'; } ?>>Rusak Parah</option>
                                     </select>
                                     <div id="error-kondisi" class="invalid-feedback"></div>
                                 </div>
@@ -75,13 +75,13 @@
                                                     Rp.
                                                 </span>
                                             </div>
-                                        <input type="number" class="form-control" id="field-njop" name="njop" placeholder="Masukan Nilai NJOP">
+                                        <input type="number" class="form-control" id="field-njop" name="njop" placeholder="Masukan Nilai NJOP" value="{{ number_format($jalan->njop,0,",","") }}">
                                     </div>
                                     <div id="error-njop" class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Keterangan Tambahan</label>
-                                    <textarea class="form-control" name="keterangan" rows="9"></textarea>
+                                    <textarea class="form-control" name="keterangan" rows="9">{{ $jalan->keterangan }}</textarea>
                                     <div id="error-keterangan" class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -142,7 +142,7 @@ jQuery(document).ready(function () {
                         buttons: false,
                         icon: 'success'
                     });
-                    window.setTimeout(function(){
+                    window.setTimeout(function () {
                         window.location = response.url;
                     });
                 } else {
@@ -170,50 +170,35 @@ long_awal = document.querySelector('#long_awal');
 lat_akhir = document.querySelector('#lat_akhir');
 long_akhir = document.querySelector('#long_akhir');
 pj_jalan = document.querySelector('#field-panjang');
+
 function tampilRute(origin, destination, service, display) {
     // alert(origin);
     directionsDisplay.setOptions({
-      polylineOptions: {
-        strokeColor: '#2cfd2c'
-      }
+        polylineOptions: {
+            strokeColor: '#2cfd2c'
+        }
     });
     service.route({
         origin: origin,
         destination: destination,
         travelMode: google.maps.TravelMode.DRIVING,
-    }, function(response, status) {
+    }, function (response, status) {
         if (status === 'OK') {
-        marker_0.setVisible(false);
-        marker_1.setVisible(false);
+            marker_0.setVisible(false);
+            marker_1.setVisible(false);
 
-        directionsDisplay.setDirections(response);
+            directionsDisplay.setDirections(response);
         } else {
-        alert('Could not display directions due to: ' + status);
+            alert('Could not display directions due to: ' + status);
         }
     });
     // alert('asoo');
 }
 
-function reset_alamat()
-{
+function reset_alamat() {
     $('#cari_alamat').val('');
 }
 
-function show_marker(kordinat, koor1, koor2)
-{
-    if(cek_marker == 2)
-    {
-        marker_1.setVisible(true);
-        marker_1.setPosition(kordinat);
-        longlat2.value = koor1  + ', ' + koor2;
-        tampilRute(longlat1.value, longlat2.value, directionsService, directionsDisplay);
-    }else if(cek_marker == 1){
-        marker_0.setVisible(true);
-        marker_0.setPosition(kordinat);
-        longlat1.value = koor1  + ', ' + koor2;
-    }
-    // alert(cek_marker);
-}
 function computeTotalDistance(result) {
     var total = 0;
     var polyline = new google.maps.Polyline({
@@ -236,8 +221,6 @@ function computeTotalDistance(result) {
             }
         }
     }
-    // total = total / 1000;
-    // console.log(coba);
     pj_jalan.value = total;
     polyline.setMap(map);
     polypath.value = polyline.getPath().getArray().toString();

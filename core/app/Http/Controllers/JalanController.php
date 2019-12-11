@@ -46,8 +46,11 @@ class JalanController extends Controller
                 ->addColumn('lebar', function($row){
                     return $row->lebar.' Meter';
                 })
+                ->addColumn('njop', function($row){
+                    return 'Rp '. number_format($row->njop,0,",",".");
+                })
                 ->addColumn('ang_tahun', function($row){
-                    $ang = Penganggaran::where('rute_id', $row->jalan_id)->whereYear('tgl', date('Y'))->latest()->get();
+                    $ang = Penganggaran::where('rute_id', $row->jalan_id)->whereYear('tgl', date('Y'))->get();
                     return $ang->count(). ' Penganggaran';
                 })
                 ->addColumn('ang_last', function($row){
@@ -65,9 +68,9 @@ class JalanController extends Controller
                             <button type="button" class="btn btn-secondary dropdown-toggle" id="btnGroupVerticalDrop3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Aksi</button>
                             <div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 34px, 0px);">
                                 <a class="dropdown-item" href="'. route('jalan.detail', $row->jalan_id) .'">
-                                    <i class="si si-note mr-5"></i>Detail Jalan
+                                    <i class="si si-eye mr-5"></i>Detail Data Jalan
                                 </a>
-                                <a class="dropdown-item" href="javascript:void(0)" onClick="edit('.$row->jalan_id.')">
+                                <a class="dropdown-item" href="'. route('jalan.edit', $row->jalan_id) .'">
                                     <i class="si si-note mr-5"></i>Edit Data Jalan
                                 </a>
                                 <a class="dropdown-item" href="javascript:void(0)" onClick="hapus('.$row->jalan_id.')">
@@ -78,7 +81,7 @@ class JalanController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['panjang', 'lebar', 'ang_tahun', 'ang_last', 'action'])
+                ->rawColumns(['panjang', 'lebar', 'ang_tahun', 'ang_last', 'action', 'njop'])
                 ->make(true);
         }
         return view('jalan.index');
@@ -146,7 +149,7 @@ class JalanController extends Controller
             $gmap->add_marker($marker);
 
             $map = $gmap->create_map();
-            return view('jalan.tambah1', compact('map'));
+            return view('jalan.tambah', compact('map'));
         }else{
             $rules = [
                 'nama' => 'required',
@@ -285,6 +288,51 @@ class JalanController extends Controller
 
         $map = $gmap->create_map();
         return view('jalan.detail', compact('jalan', 'map', 'jembatan', 'drainase', 'tpt', 'beton', 'penganggaran', 'penganggaran_last'));
+    }
+
+    public function edit($id){
+
+        $jalan = Jalan::find($id);
+
+        $config['center'] = $jalan->lat_akhir.', '.$jalan->lng_akhir;
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '600';
+        $config['map_type'] = 'ROADMAP';
+        $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
+        $config['places'] = TRUE;
+        $config['styles'] = array(
+        array("name"=>"Tanpa Label", "definition"=>array(
+            array("featureType"=>"poi.business", "elementType"=>"labels", "stylers"=>array(array("visibility"=>"off")))
+        ))
+        );
+        $config['kmlLayerPreserveViewport'] = TRUE;
+        $config['kmlLayerURL'] = 'https://www.dropbox.com/s/m64e170tumyev60/BandungBarat.kmz?dl=0';
+        $config['stylesAsMapTypes'] = true;
+        $config['stylesAsMapTypesDefault'] = "Black Roads";
+        $config['onrightclick'] = 'show_marker(event.latLng, event.latLng.lat(), event.latLng.lng()); cek_marker += 1;';
+        $config['placesAutocompleteInputID'] = 'cari_alamat';
+        $config['placesAutocompleteBoundsMap'] = TRUE;
+        $config['placesAutocompleteOnChange'] = "reset_alamat();";
+
+        $config['directions'] = TRUE;
+        $config['directionsStart'] = $jalan->lat_awal.', '.$jalan->lng_awal;
+        $config['directionsEnd'] = $jalan->lat_akhir.', '.$jalan->lng_akhir;
+        $config['directionsDraggable'] = TRUE;
+        $config['directionsAvoidHighways'] = TRUE;
+        $config['directionsChanged'] = 'longlat1.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        longlat2.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        lat_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat();
+        long_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        lat_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat();
+        long_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        computeTotalDistance(directionsDisplay.getDirections());
+        ';
+        $gmap = new GMaps();
+        $gmap->initialize($config);
+
+        $map = $gmap->create_map();
+
+        return view('jalan.edit', compact('jalan', 'map'));
     }
 
     public function simpan(Request $request)
@@ -441,23 +489,6 @@ class JalanController extends Controller
                     'fail' => false,
                 ]);
             }
-        }
-    }
-
-    public function edit($id){
-
-        $data = Jalan::find($id);
-        if($data){
-
-            $user = collect([
-                'jalan_id' => $data->jalan_id,
-                'nama' => $data->nama,
-                'panjang' => $data->panjang,
-                'lebar' => $data->lebar,
-                'kondisi' => $data->kondisi,
-            ]);
-
-            return response()->json($user);
         }
     }
 

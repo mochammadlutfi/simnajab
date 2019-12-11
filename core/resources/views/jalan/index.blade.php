@@ -21,13 +21,14 @@
             <table class="table table-hover table-striped" id="list-jalan" style="font-size:12px">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Nama Ruas Jalan</th>
-                        <th>Panjang</th>
-                        <th>Lebar</th>
+                        <th width="5%">No</th>
+                        <th width="25%">Ruas Jalan</th>
+                        <th width="5%">Panjang</th>
+                        <th width="5%">Lebar</th>
+                        <th width="15%">NJOP</th>
                         <th>Penganggaran Tahun Ini</th>
                         <th>Penganggaran Terakhir</th>
-                        <th></th>
+                        <th width="10%"></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -58,6 +59,10 @@ $(function () {
             {
                 data: 'lebar',
                 name: 'lebar'
+            },
+            {
+                data: 'njop',
+                name: 'njop'
             },
             {
                 data: 'ang_tahun',
