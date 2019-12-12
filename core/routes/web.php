@@ -91,6 +91,9 @@ Route::group(['prefix' => '/penganggaran'], function () {
     Route::post('/update','PenganggaranController@update')->name('penganggaran.update');
     Route::get('/hapus/{id}','PenganggaranController@hapus')->name('penganggaran.hapus');
     Route::post('/json/{id}','PenganggaranController@json')->name('penganggaran.json');
+    Route::post('/upload-file','PenganggaranController@file_upload')->name('penganggaran.file_upload');
+    Route::post('/hapus-file','PenganggaranController@hapus_file')->name('penganggaran.hapus_file');
+
 
 });
 

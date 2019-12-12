@@ -210,12 +210,6 @@ $(function () {
                 data: 'tgl',
                 name: 'tgl'
             },
-            {
-                data: 'action',
-                name: 'action',
-                orderable: false,
-                searchable: false
-            },
         ]
     });
 

@@ -20,6 +20,7 @@ use App\Helpers\MapTPT;
 use App\Helpers\MapBeton;
 use App\Helpers\PenganggaranHelp;
 use App\Helpers\GeneralHelp;
+use Illuminate\Support\Facades\Storage;
 class PenganggaranController extends Controller
 {
     /**
@@ -260,30 +261,43 @@ class PenganggaranController extends Controller
         $penganggaran = Penganggaran::find($id);
         $dokumen = Dokumen::where('penganggaran_id', $penganggaran->id)->OrderBy('created_at', 'DESC')->get();
         $jalan = Jalan::find($penganggaran->rute_id);
+        $prev_berk = array();
+        $berkas = array();
+        foreach($dokumen as $d)
+        {
+            $berkas[] = array(
+                'caption' => $d->nama,
+                'key' => $d->id,
+                'url' => route('penganggaran.hapus_file'),
+            );
+            $prev_berk[] = asset($d->path);
+        }
+        $berkas = json_encode($berkas);
+        $prev_berk = json_encode($prev_berk);
         if($penganggaran->jenis == 'jalan')
         {
             $map = PenganggaranHelp::jalan($penganggaran->id);
-            return view('penganggaran.jalan.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
+            return view('penganggaran.jalan.detail', compact('jalan', 'map', 'penganggaran', 'dokumen', 'berkas', 'prev_berk'));
 
         }else if($penganggaran->jenis == 'drainase')
         {
             $map = PenganggaranHelp::drainase($penganggaran->id);
-            return view('penganggaran.drainase.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
+            return view('penganggaran.drainase.detail', compact('jalan', 'map', 'penganggaran', 'dokumen', 'dokumen', 'berkas', 'prev_berk'));
 
         }else if($penganggaran->jenis == 'jembatan')
         {
             $map = PenganggaranHelp::jembatan($penganggaran->id);
-            return view('penganggaran.jembatan.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
+            return view('penganggaran.jembatan.detail', compact('jalan', 'map', 'penganggaran', 'dokumen', 'dokumen', 'berkas', 'prev_berk'));
 
         }else if($penganggaran->jenis == 'tpt')
         {
             $map = PenganggaranHelp::tpt($penganggaran->id);
-            return view('penganggaran.tpt.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
+            return view('penganggaran.tpt.detail', compact('jalan', 'map', 'penganggaran', 'dokumen', 'dokumen', 'berkas', 'prev_berk'));
 
         }else if($penganggaran->jenis == 'beton')
         {
             $map = PenganggaranHelp::beton($penganggaran->id);
-            return view('penganggaran.beton.detail', compact('jalan', 'map', 'penganggaran', 'dokumen'));
+            return view('penganggaran.beton.detail', compact('jalan', 'map', 'penganggaran', 'dokumen', 'dokumen', 'berkas', 'prev_berk'));
         }
     }
 
@@ -450,6 +464,112 @@ class PenganggaranController extends Controller
                 $output .= '<option value="'.$row->beton_id.'">Titik '. $row->patok_awal .' Meter - Titik '. $row->patok_akhir .' Meter </option>';
             }
             echo $output;
+        }
+    }
+
+    public function edit($penganggaran_id)
+    {
+        $a = Penganggaran::find($penganggaran_id);
+        $jalan = Jalan::find($a->rute_id);
+        $dokumen = Dokumen::where('penganggaran_id',$penganggaran_id)->latest()->get();
+
+        $prev_berk = array();
+        $berkas = array();
+        foreach($dokumen as $d)
+        {
+            $berkas[] = array(
+                'caption' => $d->nama,
+                'key' => $d->id,
+                'url' => route('penganggaran.hapus_file'),
+            );
+            $prev_berk[] = asset($d->path);
+        }
+        $berkas = json_encode($berkas);
+        $prev_berk = json_encode($prev_berk);
+
+        // dd(json_encode($berkas));
+
+        return view('penganggaran.edit', compact('a', 'jalan', 'berkas', 'prev_berk'));
+    }
+
+    public function update(Request $request)
+    {
+        $rules = [
+            'perusahaan' => 'required',
+            'nomor_bast' => 'required',
+            'jml_anggaran' => 'required',
+        ];
+
+        $pesan = [
+            'perusahaan.required' => 'Nama Perusahaan Wajib Diisi!',
+            'nomor_bast.required' => 'No. BAST Jalan Wajib Diisi!',
+            'jml_anggaran.required' => 'Jumlah Penganggaran Jalan Wajib Diisi!',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $pesan);
+        if ($validator->fails()){
+            return response()->json([
+                'fail' => true,
+                'errors' => $validator->errors()
+            ]);
+        }else{
+
+            $data = Penganggaran::find($request->penganggaran_id);
+            $data->tgl = date('Y-m-d', strtotime($request->tgl));
+            $data->perusahaan = $request->perusahaan;
+            $data->nomor_bast = $request->nomor_bast;
+            $data->sumber = $request->sumber;
+            $data->jml_anggaran = $request->jml_anggaran;
+            $data->keterangan = $request->keterangan;
+            if($data->save())
+            {
+                return response()->json([
+                    'fail' => false,
+                    'url' => route('penganggaran.detail', $data->id)
+                ]);
+            }
+        }
+    }
+
+    public function file_upload(Request $request)
+    {
+        // dd($request->all());
+        if($request->hasfile('files'))
+        {
+            foreach($request->file('files') as $f)
+            {
+                $name= $f->getClientOriginalName();
+                $f->move(public_path().'/uploads/dokumen/'.$request->penganggaran_id.'', $name);
+                $file = array(
+                    'penganggaran_id' => $request->penganggaran_id,
+                    'nama' => $name,
+                    'path' => '/uploads/dokumen/'.$request->penganggaran_id.'/'.$name,
+                );
+                Dokumen::insert($file);
+            }
+            return response()->json([
+                'nothing' => true,
+            ]);
+        }
+    }
+
+    public function hapus_file(Request $request)
+    {
+        // dd($request->all());
+        $dokumen = Dokumen::find($request->key);
+        $file = public_path().$dokumen->path;
+        if (is_file($file)){
+            $hapus_file = unlink($file);
+            if($hapus_file)
+            {
+                $hapus_db = Dokumen::destroy($dokumen->id);
+                if($hapus_db)
+                {
+                    return response()->json([
+                        'nothing' => true,
+                    ]);
+                }
+            }
         }
     }
 

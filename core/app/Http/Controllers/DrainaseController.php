@@ -37,6 +37,12 @@ class DrainaseController extends Controller
             $data = Drainase::where('jalan_id', $jalan_id)->latest()->get();
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->setRowAttr([
+                    'onClick' => function($row) {
+                        return "detail_penganggaran(".$row->penganggaran_id.")";
+                    },
+                    'style' => 'cursor:pointer',
+                ])
                 ->addColumn('panjang', function($row){
                     return $row->panjang.' Meter';
                 })
@@ -76,7 +82,7 @@ class DrainaseController extends Controller
                     $btn = '<center><div class="btn-group" role="group">
                             <button type="button" class="btn btn-secondary dropdown-toggle" id="btnGroupVerticalDrop3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Aksi</button>
                             <div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 34px, 0px);">
-                                <a class="dropdown-item" href="javascript:void(0)" onClick="edit('.$row->drainase_id.')">
+                                <a class="dropdown-item" href="'. route('drainase.edit', $row->drainase_id) .'">
                                     <i class="si si-note mr-5"></i>Edit Data Drainase
                                 </a>
                                 <a class="dropdown-item" href="javascript:void(0)" onClick="hapus('.$row->drainase_id.')">
@@ -373,19 +379,47 @@ class DrainaseController extends Controller
 
     public function edit($id){
 
-        $data = Drainase::find($id);
-        if($data){
-            $d = collect([
-                'drainase_id' => $data->drainase_id,
-                'jalan_id' => $data->jalan_id,
-                'pasang_batu' => $data->pasang_batu,
-                'beton' => $data->beton,
-                'kondisi' => $data->kondisi,
-                'posisi' => $data->posisi,
-            ]);
+        $drainase = Drainase::find($id);
+        $jalan = Jalan::find($drainase->jalan_id);
+        $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
+        $config['zoom'] = 'auto';
+        $config['map_height'] = '450px';
+        $config['map_type'] = 'SATELLITE';
+        $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
+        $config['places'] = TRUE;
+        $config['stylesAsMapTypes'] = true;
+        $config['stylesAsMapTypesDefault'] = "Black Roads";
 
-            return response()->json($d);
-        }
+        $config['directions'] = TRUE;
+        $config['directionsStart'] = $drainase->lat_awal.', '.$drainase->lng_awal;
+        $config['directionsEnd'] = $drainase->lat_akhir.', '.$drainase->lng_akhir;
+        $config['directionsDraggable'] = TRUE;
+        $config['directionsAvoidHighways'] = TRUE;
+        $config['directionsChanged'] = 'longlat1.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        longlat2.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        lat_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat();
+        long_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        lat_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat();
+        long_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        computeTotalDistance(directionsDisplay.getDirections());
+        ';
+        $gmap = new GMaps();
+        $gmap->initialize($config);
+
+        // Inisialisasi Jalan Awal
+        $polyline = array();
+        $c = str_replace('(', '', $jalan->polyline);
+        $c = str_replace('),', '|', $c);
+        $c = str_replace(')', '|', $c);
+        $array = explode('|',$c);
+        $polyline['points'] = array_filter($array);
+        $polyline['strokeWeight'] = 5;
+        $polyline['strokeColor'] = 'green';
+        $gmap->add_polyline($polyline);
+
+        $map = $gmap->create_map();
+
+        return view('drainase.edit', compact('jalan', 'map'));
     }
 
     public function hapus($id)

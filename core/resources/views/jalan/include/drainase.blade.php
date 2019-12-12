@@ -22,7 +22,6 @@
                         <th>Kondisi</th>
                         <th>Posisi</th>
                         <th>Penganggaran Terakhir</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
