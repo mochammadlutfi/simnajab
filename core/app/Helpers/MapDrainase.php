@@ -8,10 +8,13 @@ use App\Models\Drainase;
 use Carbon\Carbon;
 class MapDrainase
 {
-	public static function pemeliharaan($jalan_id, $drainase_id)
-	{
+
+    public static function show($drainase_id)
+    {
         $drainase = Drainase::find($drainase_id);
-        $jalan = Jalan::find($jalan_id);
+        $jalan = Jalan::find($drainase->jalan_id);
+
+
         $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
         $config['zoom'] = '13';
         $config['map_height'] = '630px';
@@ -41,19 +44,18 @@ class MapDrainase
         $gmap->initialize($config);
 
 
+        // Garis Jalan
+        $polyline = array();
+        $c = str_replace('(', '', $jalan->polyline);
+        $c = str_replace('),', '|', $c);
+        $c = str_replace(')', '|', $c);
+        $array = explode('|',$c);
+        $polyline['points'] = array_filter($array);
+        $polyline['strokeWeight'] = 5;
+        $polyline['strokeColor'] = 'blue';
+        $gmap->add_polyline($polyline);
 
-
-         // Inisialisasi Jalan Awal
-         $polyline = array();
-         $c = str_replace('(', '', $jalan->polyline);
-         $c = str_replace('),', '|', $c);
-         $c = str_replace(')', '|', $c);
-         $array = explode('|',$c);
-         $polyline['points'] = array_filter($array);
-         $polyline['strokeWeight'] = 5;
-         $polyline['strokeColor'] = 'blue';
-         $gmap->add_polyline($polyline);
-
+        // Garis Drainase
         $polyline = array();
         $c = str_replace('(', '', $drainase->polyline);
         $c = str_replace('),', '|', $c);
@@ -64,30 +66,64 @@ class MapDrainase
         $polyline['strokeColor'] = 'yellow';
         $gmap->add_polyline($polyline);
 
-        $marker = array();
-        $marker['position'] = $array[0];
-        $marker['draggable'] = true;
-        $marker['ondragend'] = 'marker_0.setPosition(find_closest_point_on_path(event.latLng,polyline_1.getPath().getArray()));
-        marker_1.setVisible(true);
-        longlat1.value = event.latLng.lat() + \', \' + event.latLng.lng();
-        patok_awal.value = hitung_jarak(start_jalan, event.latLng)';
-        $marker['ondrag'] = 'marker_0.setPosition(find_closest_point_on_path(event.latLng,polyline_1.getPath().getArray()));';
-        $marker['icon'] = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=A|EA4335|FFFFFF';
-        $marker['infowindow_content'] = 'Titik Awal TPT';
-        $gmap->add_marker($marker);
+        return $gmap->create_map();
+    }
 
-        $marker = array();
-        $marker['position'] = $drainase->lat_akhir.', '.$drainase->lng_akhir;
-        $marker['draggable'] = true;
-        $marker['visible'] = FALSE;
-        $marker['ondragend'] = 'marker_1.setPosition(find_closest_point_on_path(event.latLng,polyline_1.getPath().getArray()));
-        longlat2.value = event.latLng.lat() + \', \' + event.latLng.lng();
-        tampilRute(longlat1.value, event.latLng, directionsService, directionsDisplay);';
-        // $marker['ondrag'] = 'tampilRute(event.latLng.lat(), event.latLng.lng(), directionsService, directionsDisplay);';
-        $marker['ondrag'] = 'marker_1.setPosition(find_closest_point_on_path(event.latLng,polyline_1.getPath().getArray()));';
-        $marker['icon'] = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=B|EA4335|FFFFFF';
-        $marker['infowindow_content'] = 'Titik Akhir TPT';
-        $gmap->add_marker($marker);
+	public static function pemeliharaan($jalan_id, $drainase_id)
+	{
+        $drainase = Drainase::find($drainase_id);
+        $jalan = Jalan::find($jalan_id);
+
+        $config['center'] = $jalan->lat_awal.', '.$jalan->lng_awal;
+        $config['zoom'] = '13';
+        $config['map_height'] = '630px';
+        $config['map_type'] = 'SATELLITE';
+        $config['map_types_available'] = array('ROADMAP', 'SATELLITE');
+        $config['places'] = TRUE;
+        $config['stylesAsMapTypes'] = true;
+        $config['stylesAsMapTypesDefault'] = "Black Roads";
+
+        $config['directions'] = TRUE;
+        $config['directionsDraggable'] = TRUE;
+        $config['directionsAvoidHighways'] = TRUE;
+        $config['directionsChanged'] = 'longlat1.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        longlat2.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat() + \', \' + directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        lat_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lat();
+        long_awal.value = directionsDisplay.directions.routes[0].legs[0].start_location.lng();
+        lat_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lat();
+        long_akhir.value = directionsDisplay.directions.routes[0].legs[0].end_location.lng();
+        computeTotalDistance(directionsDisplay.getDirections());
+        start_patok =  new google.maps.LatLng(directionsDisplay.directions.routes[0].legs[0].start_location.lat(), directionsDisplay.directions.routes[0].legs[0].start_location.lng());
+        end_patok =  new google.maps.LatLng(directionsDisplay.directions.routes[0].legs[0].end_location.lat(), directionsDisplay.directions.routes[0].legs[0].end_location.lng());
+        patok_awal.value = hitung_jarak(start_jalan, start_patok);
+        patok_akhir.value = hitung_jarak(start_jalan, end_patok);
+        ';
+
+        $gmap = new GMaps();
+        $gmap->initialize($config);
+
+
+        // Garis Jalan
+        $polyline = array();
+        $c = str_replace('(', '', $jalan->polyline);
+        $c = str_replace('),', '|', $c);
+        $c = str_replace(')', '|', $c);
+        $array = explode('|',$c);
+        $polyline['points'] = array_filter($array);
+        $polyline['strokeWeight'] = 5;
+        $polyline['strokeColor'] = 'blue';
+        $gmap->add_polyline($polyline);
+
+        // Garis Drainase
+        $polyline = array();
+        $c = str_replace('(', '', $drainase->polyline);
+        $c = str_replace('),', '|', $c);
+        $c = str_replace(')', '|', $c);
+        $array = explode('|',$c);
+        $polyline['points'] = array_filter($array);
+        $polyline['strokeWeight'] = 4;
+        $polyline['strokeColor'] = 'yellow';
+        $gmap->add_polyline($polyline);
 
         return $gmap->create_map();
     }

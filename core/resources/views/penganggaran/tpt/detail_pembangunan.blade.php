@@ -12,6 +12,10 @@
     <div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Detail Penganggaran <small>{{ $jalan->nama }}</small></h3>
+            <a href="{{ route('penganggaran.edit',$penganggaran->id) }}" class="btn btn-secondary mr-5 mb-5 float-right btn-rounded">
+                <i class="si si-note mr-5"></i>
+                Edit Data Penganggaran
+            </a>
         </div>
         <div class="block-content pb-15">
             <div class="row">

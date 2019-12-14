@@ -8,7 +8,6 @@
                         <th>Panjang Flat Beton</th>
                         <th>Kondisi Flat Beton</th>
                         <th>Penganggaran Terakhir</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody></tbody>

@@ -1,10 +1,19 @@
 <div class="tab-pane" id="penganggaran_jalan" role="tabpanel">
     <div class="row mb-15">
         <div class="col-lg-6">
-            {{-- <button type="button" class="btn btn-secondary mr-5 mb-5 float-left btn-rounded">
-                <i class="si si-printer mr-5"></i>
-                Laporan Penganggaran
-            </button> --}}
+            <div class="form-group row">
+                <div class="col-lg-6">
+                    <select class="form-control" name="filter_jenis" id="filter_jenis">
+                        <option value="">Jenis Penganggaran</option>
+                        <option value="drainase">Drainase</option>
+                        <option value="beton">Flat Beton</option>
+                        <option value="jalan">Jalan</option>
+                        <option value="jembatan">Jembatan</option>
+                        <option value="tpt">TPT</option>
+                    </select>
+                    <div id="error-sumber" class="invalid-feedback"></div>
+                </div>
+            </div>
         </div>
         <div class="col-lg-6">
             <a href="{{ route('penganggaran.tambah', $jalan->jalan_id) }}" class="btn btn-secondary mr-5 mb-5 float-right btn-rounded">

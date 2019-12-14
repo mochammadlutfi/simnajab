@@ -78,7 +78,12 @@ class PenganggaranController extends Controller
     public function data($jalan_id, Request $request)
     {
         if ($request->ajax()) {
-            $data = Penganggaran::where('rute_id', $jalan_id)->latest()->get();
+            if($request->filter_jenis)
+            {
+                $data = Penganggaran::where('jenis', $request->filter_jenis)->where('rute_id', $jalan_id)->latest()->get();
+            }else{
+                $data = Penganggaran::where('rute_id', $jalan_id)->latest()->get();
+            }
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->setRowAttr([
@@ -95,6 +100,9 @@ class PenganggaranController extends Controller
                 })
                 ->addColumn('anggaran', function($row){
                     return 'Rp.'. number_format($row->jml_anggaran,0,",",".");
+                })
+                ->addColumn('tgl', function($row){
+                    return GeneralHelp::tgl_indo($row->tgl);
                 })
                 ->rawColumns(['img', 'action', 'jabatan', 'tgl'])
                 ->make(true);

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use FarhanWazir\GoogleMaps\GMaps;
 use App\Helpers\GeneralHelp;
+use App\Helpers\MapDrainase;
+
 class DrainaseController extends Controller
 {
     /**
@@ -177,9 +179,14 @@ class DrainaseController extends Controller
 
     public function detail($id)
     {
-        $jalan = Jalan::find($id);
+        $drainase = Drainase::find($id);
+        $jalan = Jalan::find($drainase->jalan_id);
+        $penganggaran = Penganggaran::find($drainase->penganggaran_id);
+        $ang_drainase = AngDrainase::where('drainase_id', $drainase->drainase_id)->latest()->get();
 
-        return view('jalan.detail', compact('jalan'));
+        $map = MapDrainase::show($drainase->drainase_id);
+
+        return view('drainase.detail', compact('drainase', 'jalan', 'penganggaran', 'ang_drainase', 'map'));
     }
 
     public function simpan(Request $request)

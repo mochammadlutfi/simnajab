@@ -21,7 +21,6 @@
                         <th>Kondisi</th>
                         <th>Pembangunan</th>
                         <th>Penganggaran Terakhir</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody></tbody>

@@ -7,14 +7,14 @@
         <a class="breadcrumb-item" href="{{ route('beranda') }}">Beranda</a>
         <a class="breadcrumb-item" href="{{ route('jalan') }}">Rute Jalan</a>
         <a class="breadcrumb-item" href="{{ route('jalan.detail', $jalan->jalan_id) }}">{{ $jalan->nama }}</a>
-        <span class="breadcrumb-item active">Detail Penganggaran</span>
+        <span class="breadcrumb-item active">Detail Drainase</span>
     </nav>
     <div class="block">
         <div class="block-header block-header-default">
-            <h3 class="block-title">Detail Penganggaran <small>{{ $jalan->nama }}</small></h3>
+            <h3 class="block-title">Detail Drainase <small>{{ $jalan->nama }}</small></h3>
             <a href="{{ route('penganggaran.edit',$penganggaran->id) }}" class="btn btn-secondary mr-5 mb-5 float-right btn-rounded">
                 <i class="si si-note mr-5"></i>
-                Edit Data Penganggaran
+                Edit Data Drainase
             </a>
         </div>
         <div class="block-content pb-15">
@@ -65,9 +65,9 @@
                                 <td>Panjang {{ ucwords($penganggaran->tujuan) }}</td>
                                 <td><span class="mr-5">:</span>
                                     @if($penganggaran->tujuan == 'Pembangunan')
-                                    {{ $penganggaran->tpt->panjang }} Meter
+                                        {{ $penganggaran->drainase->panjang }} Meter
                                     @else
-                                    {{ $penganggaran->AngTPT->panjang }} Meter
+                                        {{ $penganggaran->AngDrainase->panjang }} Meter
                                     @endif
                                 </td>
                             </tr>
@@ -75,9 +75,9 @@
                                 <td>Patok Awal {{ ucwords($penganggaran->tujuan) }}</td>
                                 <td><span class="mr-5">:</span>
                                     @if($penganggaran->tujuan == 'Pembangunan')
-                                    {{ $penganggaran->tpt->patok_awal }} Meter
+                                    {{ $penganggaran->drainase->patok_awal }} Meter
                                     @else
-                                    {{ $penganggaran->AngTPT->patok_awal }} Meter
+                                    {{ $penganggaran->AngDrainase->patok_awal }} Meter
                                     @endif
                                 </td>
                             </tr>
@@ -85,9 +85,9 @@
                                 <td>Patok Akhir {{ ucwords($penganggaran->tujuan) }}</td>
                                 <td><span class="mr-5">:</span>
                                     @if($penganggaran->tujuan == 'Pembangunan')
-                                    {{ $penganggaran->tpt->patok_akhir }} Meter
+                                    {{ $penganggaran->drainase->patok_akhir }} Meter
                                     @else
-                                    {{ $penganggaran->AngTPT->patok_akhir }} Meter
+                                    {{ $penganggaran->AngDrainase->patok_akhir }} Meter
                                     @endif
                                 </td>
                             </tr>
@@ -97,55 +97,6 @@
                                     {{ GeneralHelp::tgl_indo($penganggaran->tgl) }}
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td width="40%" class="font-weight-bold">Keterangan :</td>
-                            </tr>
-                            @if($penganggaran->keterangan <> null || $penganggaran->keterangan <> '')
-                                <tr>
-                                    <td>{{ $penganggaran->keterangan }}</td>
-                                </tr>
-                            @else
-                                <tr>
-                                    <td>Tidak Ada Keterangan Tambahan</td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <th colspan="3" class="font-weight-bold">Dokumen</th>
-                            </tr>
-                            @if($dokumen->isEmpty())
-                            <tr>
-                                <td colspan="3" class="text-center">Dokumen Tidak Ditemukan</td>
-                            </tr>
-                            @else
-                                @php $i = 1; @endphp
-                                @foreach($dokumen as $d)
-                                    <tr>
-                                        <td>{{ $i++ }}</td>
-                                        <td>{{ $d->nama }}</td>
-                                        <td>
-                                            <a href="{{ url($d->path) }}" class="btn btn-sm btn-secondary" target="_blank" data-toggle="tooltip" title="Download">
-                                                <i class="fa fa-download"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
                         </tbody>
                     </table>
                 </div>

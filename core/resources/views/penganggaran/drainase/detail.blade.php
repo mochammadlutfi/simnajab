@@ -12,7 +12,7 @@
     <div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Detail Penganggaran <small>{{ $jalan->nama }}</small></h3>
-            <a href="{{ route('penganggaran.edit',$penganggaran->id) }}" class="btn btn-alt-secondary float-right">
+            <a href="{{ route('penganggaran.edit',$penganggaran->id) }}" class="btn btn-secondary mr-5 mb-5 float-right btn-rounded">
                 <i class="si si-note mr-5"></i>
                 Edit Data Penganggaran
             </a>
@@ -171,10 +171,15 @@
         showUpload: false,
         showCaption: false,
         showCancel: false,
+        showRemove: false,
+        layoutTemplates: {
+            actionDelete: '',
+            actionDrag: '',
+        },
+        initialPreviewShowDelete: false,
         previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
         overwriteInitial: false,
         initialPreviewAsData: true,
-        initialPreviewShowDelete: false,
         initialPreview: <?= $prev_berk; ?>,
         initialPreviewConfig: <?= $berkas; ?>,
         initialPreviewDownloadUrl: true,

@@ -169,12 +169,6 @@ $(function () {
                 data: 'tgl',
                 name: 'tgl'
             },
-            {
-                data: 'action',
-                name: 'action',
-                orderable: false,
-                searchable: false
-            },
         ]
     });
 
@@ -233,12 +227,6 @@ $(function () {
                 data: 'tgl',
                 name: 'tgl'
             },
-            {
-                data: 'action',
-                name: 'action',
-                orderable: false,
-                searchable: false
-            },
         ]
     });
 
@@ -270,49 +258,95 @@ $(function () {
                 data: 'tgl',
                 name: 'tgl'
             },
-            {
-                data: 'action',
-                name: 'action',
-                orderable: false,
-                searchable: false
-            },
         ]
     });
 
-    $('#list-penganggaran').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "<?= route('penganggaran.data', $jalan->jalan_id); ?>",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex'
+
+    fetch_penganggaran();
+    function fetch_penganggaran(filter_jenis = '')
+    {
+        $('#list-penganggaran').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "<?= route('penganggaran.data', $jalan->jalan_id); ?>",
+                data: {
+                    filter_jenis: filter_jenis
+                }
             },
-            {
-                data: 'jenis',
-                name: 'jenis'
-            },
-            {
-                data: 'tujuan',
-                name: 'tujuan'
-            },
-            {
-                data: 'perusahaan',
-                name: 'perusahaan'
-            },
-            {
-                data: 'nomor_bast',
-                name: 'nomor_bast'
-            },
-            {
-                data: 'anggaran',
-                name: 'anggaran'
-            },
-            {
-                data: 'tgl',
-                name: 'tgl'
-            },
-        ]
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
+                },
+                {
+                    data: 'jenis',
+                    name: 'jenis'
+                },
+                {
+                    data: 'tujuan',
+                    name: 'tujuan'
+                },
+                {
+                    data: 'perusahaan',
+                    name: 'perusahaan'
+                },
+                {
+                    data: 'nomor_bast',
+                    name: 'nomor_bast'
+                },
+                {
+                    data: 'anggaran',
+                    name: 'anggaran'
+                },
+                {
+                    data: 'tgl',
+                    name: 'tgl'
+                },
+            ]
+        });
+    }
+
+
+
+    $('#filter_jenis').change(function () {
+        var filter_jenis = $('#filter_jenis').val();
+        $('#list-penganggaran').DataTable().destroy();
+        fetch_penganggaran(filter_jenis);
     });
+    // $('#list-penganggaran').DataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     ajax: "<?= route('penganggaran.data', $jalan->jalan_id); ?>",
+    //     columns: [{
+    //             data: 'DT_RowIndex',
+    //             name: 'DT_RowIndex'
+    //         },
+    //         {
+    //             data: 'jenis',
+    //             name: 'jenis'
+    //         },
+    //         {
+    //             data: 'tujuan',
+    //             name: 'tujuan'
+    //         },
+    //         {
+    //             data: 'perusahaan',
+    //             name: 'perusahaan'
+    //         },
+    //         {
+    //             data: 'nomor_bast',
+    //             name: 'nomor_bast'
+    //         },
+    //         {
+    //             data: 'anggaran',
+    //             name: 'anggaran'
+    //         },
+    //         {
+    //             data: 'tgl',
+    //             name: 'tgl'
+    //         },
+    //     ]
+    // });
 });
 function detail_penganggaran(id) {
     var url = '{{ route("penganggaran.detail", ":id") }}';
